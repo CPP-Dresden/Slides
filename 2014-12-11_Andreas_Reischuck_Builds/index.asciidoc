@@ -1,0 +1,301 @@
+= More Build Systems
+Andreas Reischuck <andreas.reischuck@hicknhack-software.com>
+v1.0, 11. December 2014
+:description: The other half of the build systems story
+:copyright: Andreas Reischuck
+:corpname: HicknHack Software GmbH
+:backend: dzslides
+:dzslides-aspect: 16-10
+:dzslides-style: asciidoctor
+:dzslides-transition: fade
+:dzslides-highlight: default
+:imagesdir: images
+:source-highlighter: highlightjs
+:docinfo:
+:email!:
+
+[.topic]
+== More Build Systems
+
+[.split]
+* _The others_
+               * _The perfect_
+* ninja
+               * {nbsp}
+* tup
+               * {nbsp}
+* SCons
+
+[.intro]
+== The "`__others__`"
+
+[.intro]
+== Ninja
+
+== !
+
+Why yet another build system?
+
+[quote.small, https://martine.github.io/ninja/]
+Where other build systems are high-level languages Ninja aims to be an assembler.
+
+[.secret]
+== !
+
+Use generators
+
+== !
+
+gyp::
+  * Chrome
+  * v8
+  * node.js
+
+== !
+
+CMake::
+  * LLVM
+  * KDE
+  * Blender
+
+== !
+
+Example
+
+----
+cflags = -Wall
+
+rule cc
+  command = gcc $cflags -c $in -o $out
+
+build foo.o: cc foo.c
+----
+
+== !
+
+Variables
+
+[subs="quotes"]
+----
+_name_ = _value_
+----
+
+[.small]
+{nbsp}
+
+Usage
+
+[subs="quotes"]
+----
+rule cc
+  command = $_name_ ${_name_}
+----
+
+== !
+
+Rule
+
+[subs="quotes"]
+----
+rule _name_
+  _key_ = _value_
+----
+
+[.small]
+keys::
+  * command, generator
+  * in, out
+  * depfile, deps
+  * description ...
+  * (nbsp)
+
+== !
+
+Build
+
+[subs="quotes"]
+----
+build _ouputs_: _rulename_ _inputs_
+  _name_ = _value_
+----
+
+== !
+
+[.statement]
+That's it!
+
+== !
+
+Summary
+
+[.incremental]
+* core of make
+* no conditionals, no changes
+* much cleaner
+* faster
+* [.red]#requires generator#
+
+[.intro]
+== Tup
+
+== !
+
+Why is it so awesome?
+
+[.incremental]
+* very fast
+* automatically cleans up
+* detect if build description isn't parallel-safe
+
+== !
+
+[.middle.expression]
+"`In tup, the arrows go up`"
+
+== !
+
+[.statement]
+"`What files need to be updated, given that file X has changed?`"
+
+== !
+
+Who uses tup?::
+
+* Chrome
+
+== !
+
+Example
+
+----
+OPTS += -Wall
+: |> sh gen_triangle.sh > %o |> triangle.h
+: foreach *.c | triangle.h |> \
+             gcc $(OPTS) -c %f -o %o |> %B.o
+: *.o |> gcc %f -o %o |> hello
+----
+
+or use .lua
+
+== !
+
+Summary
+
+[.incremental]
+* Pipeline Syntax
+* Inverted Dependency Cache
+* captures dependencies
+
+* [red]#explicit generated files#
+* [red]#Tupfile in every folder#
+
+[.intro]
+== SCons
+
+== !
+
+What is SCons?
+
+[quote.small, http://www.scons.org]
+SCons is an Open Source software construction tool - that is, a next-generation build tool.
+
+== !
+
+Who uses tup?::
+
+* Blender
+* MongoDB
+* NSIS
+
+== !
+
+Python build files
+
+[source,python]
+.SConstruct
+----
+Program('program', Glob('*.cpp'))
+----
+
+== !
+
+Summary
+
+[.incremental]
+* Python Syntax
+* [red]#Complex#
+* [red]#V8 moved to GN#
+
+== !
+
+Many more...
+
+* WAF
+* GN
+
+[.intro]
+== The _perfect_
+
+== !
+
+[.statement]
+Are we _there_ yet?
+
+== !
+
+Our candidates
+
+* cmake
+* tup
+* qbs
+
+[.question]
+== !
+
+Who uses them _daily_?
+
+* cmake
+* tup
+* qbs
+
+[.question]
+== !
+
+Why _not_?
+
+* cmake
+* tup
+* qbs
+
+[.secret]
+== !
+
+We need better a
+
+_Interface_
+
+[.question]
+== !
+
+Ideas?
+
+[.secret]
+== !
+
+_Javascript_
+
+[.pull-right]
+& Promises
+
+== !
+
+[source,coffeescript]
+.Pseudocode
+----
+define 'program', ['cpp','clob'], (cpp, clob)->
+  cpp.app 'program',
+    clob.find {h: '**/*.h', cpp: '**/*.cpp'}
+----
+
+[.intro]
+== Questions?

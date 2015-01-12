@@ -1,0 +1,130 @@
+= Meeting C++ 2014 in Berlin
+Andreas Reischuck <andreas.reischuck@hicknhack-software.com>
+v1.0, 11. December 2014
+:description: Summary of Meeting C++ 2014
+:copyright: Andreas Reischuck
+:corpname: HicknHack Software GmbH
+
+== "`Welcome Message`" Jens Weller
+
+* kein Wifi
+* 3 Tracks
+* 375 Gäste davon 50 Studenten
+
+== "`The evolving search for Effective C++`" Scott Meyers
+
+Insgesamt ging es um die "Effective C++"-Buch Serie.
+
+* möglichst einfache Regeln für C++ Programmierer (What?)
+* In lesbarer Form präsentiert (How?)
+
+container-emplace vs. insert: Node 42 aus Effective Modern C++
+
+* xvalue - expiring lvalue - std::move(name)
+* prvalue - pure rvalue
+* CWUK - Container with unique keys
+* Howard Hinnant's reality check
+  * compared call counts of libstdc++, libc++ & STL VS2013
+
+Truth alone is not enough - How to present?
+
+* Writing is important
+* Große Varianz in Anzeigegeräten von Formfaktor und Fähigkeiten
+  * Zeilenumbrüche und Farben in Code-Beispielen
+* Präsentationen
+  * Größter Teil der Zuschauer ist nicht im Raum (Youtube)
+  * now waving, no lasers => change live electronically (live coding)
+
+== Coding Dojo
+
+Rabattsystem für Bücher der Harry Potter Serie implementieren
+
+* strenges TDD
+* 5 Minuten wechsel
+
+== "`Designing value classes for modern C++`" Marc Mutz (KDAB)
+
+thin abstraction
+
+* everything inline
+* no modifiers
+* single purpose (RGB-Color/no HSL-API)
+* noexcept, constexpr => literal type
+* make it trivial type for Qt
+* Source compatibility only
+
+thick without pimpl, pimpled
+
+* Pimpl for ABI compatibility
+* support multiple APIs
+
+== "`C++ Executors`" Detlef Vollmann
+
+Executors und Schedulers werden bei ISO heiss diskutiert.
+Aktuell mehrere konkurierende Ansätze
+
+== "`Sqlpp11, An EDSL for type-safe SQL in C++`" Roland Bock
+
+SQL und C++ sind streng typisiert und sollten zusammen arbeiten
+
+* String based SQL ist anfällig für Fehler
+
+C++ Expression Templates um Interface zu vereinfachen
+
+Verschiedene Connector Bibliotheken
+
+Zukunft: Auch für C++ Container, JSON & XML-Dokumente
+
+== "`Pruning Error Messages From C++ Template Code`" Roland Bock
+
+compiletime error types
+
+* use stativ assert - as close as possible to caller API
+* static dispatch - prevent failing code
+* test error handling - grep & size
+
+== "`Asynchronous library`" Christophe Henry
+
+https://github.com/henry-ch/asynchronous
+
+Implementierung eines C++ Executors & Shedulers
+
+* parallel algorithms
+* lockfree queue
+
+== "`Multithreading done right`" Rainer Grimm
+
+unique_lock - defer_lock
+
+`lock(guard1, guard2);`
+
+condition_variable - `wait(lock_guard, [](){return dataReady == true;});`
+
+promise -> future & shared_futurue
+
+== "`When dependency hell freezes over: Managing C/C++ project dependencies`" Daniel Pfeifer
+
+* rykll - vom boost projekt
+* cmake - external project
+* biicode.com
+
+== "`Meeting C++ Update`" Jens Weller
+
+Meeting C++ 2015 (4.-5. Dez 2015)
+
+* Andels Hotel Berlin
+* Studentenprogramm
+
+Call for Papers (Ende Februar bis März)
+
+* Voting im April
+* fertiges Programm im Juni
+
+== "`Plain threads are the 'GOTO' of today's computing`" Hartmut Kaiser
+
+Programmierer braucht higher level constructs für Millionen von Threads
+Thread-Overhead inhibitiert Performance Gewinn
+
+HPX-Framework von der Stellar Group
+
+Ziel: C++ Standard
