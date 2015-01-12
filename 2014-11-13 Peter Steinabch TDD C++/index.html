@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<!-- saved from url=(0066)http://idisk.mpi-cbg.de/~steinbac/resources/20141113/tdd_in_cpp/#/ -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<meta charset="utf-8">
+
+	<title>Test-Driven Development - A C++ focused introduction</title>
+
+	<meta name="description" content="Tests first, make fail, make pass and refactor">
+	<meta name="author" content="Peter Steinbach">
+
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+	<link rel="stylesheet" href="http://idisk.mpi-cbg.de/~steinbac/resources/20141113/tdd_in_cpp/css/reveal.min.css">
+	<link rel="stylesheet" href="http://idisk.mpi-cbg.de/~steinbac/resources/20141113/tdd_in_cpp/css/theme/sky.css" id="theme">
+
+	<!-- For syntax highlighting -->
+	<link rel="stylesheet" href="http://idisk.mpi-cbg.de/~steinbac/resources/20141113/tdd_in_cpp/lib/css/zenburn.css">
+
+	<!-- If the query includes 'print-pdf', include the PDF print sheet -->
+	<script>
+		if( window.location.search.match( /print-pdf/gi ) ) {
+		var link = document.createElement( 'link' );
+		link.rel = 'stylesheet';
+		link.type = 'text/css';
+		link.href = 'css/print/pdf.css';
+		document.getElementsByTagName( 'head' )[0].appendChild( link );
+		}
+	</script><style type="text/css"></style>
+
+	<!--[if lt IE 9]>
+	<script src="lib/js/html5shiv.js"></script>
+	<![endif]-->
+
+	<!-- <script type="text/javascript" src="https://www.google.com/jsapi"></script> -->
+	<!-- <script type="text/javascript" src="local/drug_donut.js"></script> -->
+
+</head>
+
+<body style="transition: -webkit-transform 0.8s ease; -webkit-transition: -webkit-transform 0.8s ease;">
+
+	<div class="reveal default center" data-transition-speed="default" data-background-transition="default">
+
+		<!-- Any section element inside of this container is displayed as a slide -->
+		<div class="slides" style="width: 960px; height: 700px; zoom: 1;">
+	<!-- ALL SLIDES GO HERE -->
+	<!-- Each section element contains an individual slide -->
+	<section class="present" style="top: -332px; display: block;">
+	<h1>Test-Driven Development<br>in C++</h1>
+	<p><br></p>
+	<p>Dresden, Nov 13, 2014<br>
+	  <a href="mailto:steinbach@scionics.de">Peter Steinbach</a><br>
+	  <a href="http://www.scionics.de/">Scionics Computer Innovation GmbH</a><br>
+	</p>        
+	</section>
+
+	<section hidden="" class="future" style="top: -326.5px; display: block;">
+	  <h2>Disclaimer</h2>
+	  <p style="text-align: left;">This work is licensed under a<br> <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0<br> International License</a>.</p>
+	  <div style="position: absolute; top: 20%; right: 10%; max-width: 80%;">
+	  <a rel="license" href="http://creativecommons.org/licenses/by/4.0/" target="_blank"><img width="176" alt="Creative Commons License" src="./index_files/cc-by.png"></a>
+	  </div>
+
+	  <p style="text-align: left;"><br>
+	  All material contained in the slides are linked to their source if not produced by the author. If you find intellectual property is not attributed to your satisfaction, feel free to contact <a href="mailto:steinbach@scionics.de">me</a>.<br><br>
+	  
+	  For feedback, forks, discussions and contributions, go to 
+	    </p><center>
+	      <a href="https://github.com/psteinb/TDD_in_Cpp">github.com/psteinb/TDD_in_cpp</a>.
+	    </center>
+	  <p></p>
+	</section>
+
+
+	<section hidden="" class="future stack" style="top: 0px; display: block;">
+	<section style="top: -172px; display: block;">
+		<h1>How people code</h1>
+	</section>
+
+	<section class="future" style="top: -269px; display: block;">
+		<h2><b>First</b></h2>
+		<a href="http://commons.wikimedia.org/wiki/File:Pictofigo_-_Idea.png" target="_blank">
+			<img style="max-width: 50%" src="./index_files/Pictofigo_-_Idea.png" alt="http://commons.wikimedia.org/wiki/File:Pictofigo_-_Idea.png">
+		</a>
+		<h3>Idea(s)</h3>
+	</section>
+
+	<section class="future" style="top: -20px; display: none;">
+		<h2><b>Second</b></h2>
+		<a href="http://www.jeffreydev.com/the-developer-title/" target="_blank">
+			<img style="max-width: 50%" src="./index_files/developer.jpg" alt="www.jeffreydev.com/the-developer-title">
+		</a>
+		<h3>Coffee &amp; Code</h3>
+	</section>
+
+	<section class="future" style="top: -20px; display: none;">
+		<h2><b>Third</b></h2>
+		<a href="http://en.wikipedia.org/wiki/STS-115" target="_blank">
+			<img width="40%" style="max-width: 40%" src="./index_files/ShuttleAtlantis_launch.jpg" alt="en.wikipedia.org/wiki/STS-115">
+		</a>
+		<h3>Launch To Mars</h3>
+	</section>
+
+	<section class="future" style="top: -20px; display: none;">
+		<h2><b>Validate</b></h2>
+		<a href="http://en.wikipedia.org/wiki/Moon" target="_blank">
+			<img width="50%" style="max-width: 60%" src="./index_files/Full_Moon_Luc_Viatour.jpg" alt="http://en.wikipedia.org/wiki/Moon">
+		</a>
+		<h3>Unexpected Result!</h3>
+	</section>
+
+
+	<section data-background="local/297b.jpg" class="future" style="top: -20px; display: none;">
+		<!-- FIXME: not very flexible -->
+		<div style="position: absolute; top: -350px;">
+			<h1><font color="white"><b>Compile and run?</b></font></h1>      
+		</div>
+	</section>
+
+	<section class="future" style="top: -20px; display: none;">
+	  <div style="position: absolute; top: -50px;">
+		<h2>Build and Fix Software Model</h2>
+		<figure>
+		<a href="http://www.cc.gatech.edu/computing/SW_Eng/people/Faculty/Colin.Potts/Courses/3302/1-08-mgt/index.htm" target="_blank">
+			<img height="500" style="max-width: 60%" src="./index_files/img004.GIF" alt="Build and Fix">	
+		</a>
+			<figcaption style="font-size: 70%;">from <a href="http://www.cc.gatech.edu/computing/SW_Eng/people/Faculty/Colin.Potts/Courses/3302/1-08-mgt/index.htm" target="_blank">Software Process Models</a> (Lecture by Colin Potts, Gerogia Tech, 1998)
+			</figcaption>
+		</figure>
+	  </div>
+	</section>
+	</section>
+
+	<section hidden="" class="future stack" style="top: 0px; display: block;">
+	<section style="top: -350px; display: block;">
+		<h1>Code in Science</h1>
+		<a href="http://blog.f1000research.com/2014/04/04/reproducibility-tweetchat-recap/" target="_blank">
+			<img width="496" style="max-width: 60%" src="./index_files/reproducibility-small.jpg" alt="blog.f1000research.com">
+		</a>
+		<h2>Reproducibility?</h2>
+	</section>
+
+	<section class="future" style="top: -20px; display: none;">
+		<h3><b>Preclinical Cancer Research</b></h3>
+		<figure>
+			<img style="max-width: 100%" src="./index_files/nature_drug_development.png" alt="Nature Comment">
+			<figcaption>from <a href="http://www.nature.com/nature/journal/v483/n7391/full/483531a.html" target="_blank">Nature 2012</a>
+			</figcaption>
+		</figure>
+	</section>
+
+	<section class="future" style="top: -20px; display: none;">
+		<h3><b>Preclinical Cancer Research</b></h3>
+		
+		<figure>
+		  <img style="max-width: 100%" src="./index_files/donut.png" alt="Nature Comment">
+		  <figcaption>from <a href="http://www.nature.com/nature/journal/v483/n7391/full/483531a.html" target="_blank">[doi:10.1038/483531a]</a>
+			</figcaption>
+		</figure>
+	</section>
+	  
+	<section class="future" style="top: -20px; display: none;">
+		<h2>Scientific Computing?</h2>
+		<figure>	
+			<a href="http://reproducible-research.github.io/scipy-tutorial-2014/" target="_blank">
+				<img width="700" style="max-width: 90%" src="./index_files/scipy2014_reproducible_research.svg" alt="SciPy2014">
+			</a>
+			<figcaption>
+				Scipy 2014: <a href="http://reproducible-research.github.io/scipy-tutorial-2014/" target="_blank">Reproducible Research</a>
+			</figcaption>
+		</figure>
+		
+	</section>
+
+	<!-- <section> -->
+	<!-- 	<h2>Science!</h2> -->
+	<!-- 	<p> -->
+	<!-- 	<blockquote class="fragment" style="text-align: left;"> -->
+	<!-- 	  &ldquo;It is clear that scientific code is full of if-else blocks and ugly ... it's science!&rdquo; -->
+	<!-- 	  <footer style="font-size: 70%; text-align: right;"><cite>-- anonymous PI</cite></footer> -->
+	<!-- 	</blockquote> -->
+	<!-- 	<br> -->
+	<!-- 	<blockquote class="fragment" style="text-align: left;"> -->
+	<!-- 	  &ldquo;We don't need software engineering ... it's just plotting the data!&rdquo; -->
+	<!-- 	  <footer style="font-size: 70%; text-align: right;"><cite>-- anonymous PI</cite></footer> -->
+	<!-- 	</blockquote> -->
+	<!-- 	</p> -->
+	<!-- </section> -->
+
+	</section>
+
+	<section hidden="" class="future stack" style="top: -20px; display: none;">
+	  <section style="top: -20px; display: none;">
+	    <h2>Test-Driven<br>Development</h2>
+	    <figure>
+	      <a href="http://www.amazon.com/Test-Driven-Development-By-Example/dp/0321146530" target="_blank">
+		<img height="400" style="max-width: 70%" src="./index_files/71lpKZxrK6L.jpg">
+	      </a>
+	      <a href="http://en.wikipedia.org/wiki/Kent_Beck" target="_blank">
+		<img style="max-width: 40%" src="./index_files/EGRPH2571.jpg">
+	      </a>
+	      <figcaption>
+		by Kent Beck (2002)
+	      </figcaption>
+	    </figure>
+	    	  </section>
+
+	  <section class="future" style="top: -20px; display: none;">
+	    <h2>How?</h2>
+	    <figure>
+	      <a href="http://octoberclub.files.wordpress.com/2011/10/red-green-refactor.png" target="_blank">
+		<img width="700" style="max-width: 70%" src="./index_files/red-green-refactor.png"></a>
+	      <figcaption>
+		by <a href="http://octoberclub.files.wordpress.com/2011/10/red-green-refactor.png" target="_blank">Nat Pryce</a>
+	      </figcaption>
+	    </figure>
+	    
+	  </section>
+	  </section>
+	
+
+	  <section hidden="" class="future" style="top: -20px; display: none;">
+	    <h1><b>Live Demo</b></h1>
+	    <h3><br>Writing a vector with a norm!</h3>
+	  </section>
+
+	<section hidden="" class="future stack" style="top: -20px; display: none;">	  
+	  <section style="top: -20px; display: none;">
+	    <h2><b>Classical Approach</b></h2> 
+	    <div class="fragment" style="text-align: left;" data-fragment-index="0"><p><b>Unit Test</b><br>method to test smallest testable part of an application</p></div>
+	    <div class="fragment" style="text-align: left;" data-fragment-index="1"><p><b>Test Suite</b><br>sequence of Unit Tests that validate the same entity</p></div>
+	    <div class="fragment" style="text-align: left;" data-fragment-index="2"><p><b>Test Fixture</b><br>called before/after execution of unit test to setup or tear down test environment</p></div>
+	  </section>
+
+	  <!-- <section> -->
+	  <!--   <h2><b>Classical Approach</b></h2>  -->
+	  <!--   <div class="fragment" style="text-align: left;"><p><b>Unit Test</b><br>method to test smallest testable part of an application</p></div> -->
+	  <!--   <div class="fragment" style="text-align: left;"><p><b>Test Suite</b><br>sequence of Unit Tests that validate the same entity</p></div> -->
+	  <!--   <div class="fragment" style="text-align: left;"><p><b>Test Fixture</b><br>called before/after execution of unit test to setup or tear down test environment</p></div> -->
+	  <!-- </section> -->
+
+	  
+	  <section class="future" style="top: -20px; display: none;">
+	    <h2><b>What to test?</b></h2> 
+	    <h3>Let's play!</h3> 
+	  </section>
+
+	  <section class="future" style="top: -20px; display: none;">
+	    <h2><b>Test the Contract!</b></h2>
+	    <p><br></p>
+	    
+	    <blockquote class="fragment" style="text-align: center;" data-fragment-index="0"> 
+	      <ul>
+	      <li><b>pre-condition</b><br> (type and content of input data)</li>
+	      <li><b>service it provides</b><br> (the responsibility it has)</li>
+	      <li><b>post-condition</b><br> (type and content of output data)</li>
+	      </ul>
+	      <p><br></p>
+	      <footer style="font-size: 70%; text-align: right;"><cite>-- Thomas/Hunt, <i>The Pragmatic Programmer</i>, Addison-Wesley Professional, 1999</cite></footer>
+	    </blockquote>
+	    
+	  </section>
+	  
+	  <section class="future" style="top: -20px; display: none;">
+	    <h2><b>Exercise?</b></h2>
+	    <h3><a href="http://cyber-dojo.org/" target="_blank" name="cyber-dojo.org">cyber-dojo.org</a></h3>
+	    <figure>
+	      <a href="http://cyber-dojo.org/" target="_blank">
+		<img style="max-width: 90%" src="./index_files/cyber-dojo.png">
+	      </a>
+	    </figure>
+
+	  </section>
+
+
+	  
+	  <section class="future" style="top: -20px; display: none;">
+	    <div style="background-color: #E62F0A; width: 100%; height: 400%; position: absolute;  top: -50%; left: 50%; z-index: -1; opacity: 0.45;">
+	    </div>
+	    
+	    <h2>Summary</h2>
+	    
+	    <div style="width: 50%; display: inline-block; margin-right: 9%; vertical-align: top;">
+	      <p style="text-align: right;; font-size: 120%"><br>
+		</p><ul style="line-height: 150%">
+		  <li class="fragment" data-fragment-index="0">incremental design</li>
+		  <li class="fragment" data-fragment-index="1">developer confidence</li>
+		  <li class="fragment" data-fragment-index="2">less feature envy</li>
+		  <li class="fragment" data-fragment-index="3">reproducibility included</li>
+		  <li class="fragment" data-fragment-index="4">documentation included</li>
+		  <li class="fragment" data-fragment-index="5">continuous integration</li>
+		  <li class="fragment" data-fragment-index="6">...</li>
+		</ul><br><br>
+	      <p></p>
+	    </div>
+
+	    <div class="fragment" style="background-color: #01BE4C; width: 100%; height: 400%; position: absolute; top: -50%; right: 50%; z-index: -1; opacity: 0.45;" data-fragment-index="7">
+	    </div>
+	    <div style="width: 40%; display: inline-block;">
+	      <p style="text-align: left;"><br>
+	    	</p><ul style="line-height: 150%;">
+		  <li class="fragment" data-fragment-index="8">code is <i>less bug</i> free</li>
+		  <li class="fragment" data-fragment-index="9">human interaction?</li>
+		  <li class="fragment" data-fragment-index="10"><i>dead code?</i></li>
+		  <li class="fragment" data-fragment-index="11">can be misleading!</li>
+		  <li class="fragment" data-fragment-index="12"><i>hinders good design</i></li>	
+		  <li class="fragment" data-fragment-index="13">...</li>
+		</ul>
+		<br><br>
+	      <p></p>
+	    </div>
+	    <h3 class="fragment" data-fragment-index="14"><a href="http://idisk.mpi-cbg.de/~steinbac/resources/20141113/tdd_in_cpp/#/10">Ongoing Discussion!</a></h3>
+	  </section>
+	  
+
+	</section>
+	
+
+
+	<section hidden="" class="future stack" style="top: -20px; display: none;">
+	  <section style="top: -20px; display: none;">
+	    <h2>Tools</h2>
+	    <figure>
+	      <img style="max-width: 70%" src="./index_files/tools.jpg">
+	      <figcaption>from <a href="http://upload.wikimedia.org/wikipedia/commons/f/f4/20060513_toolbox.jpg" target="_blank">wikipedia</a></figcaption></figure>
+	  </section>
+
+	  <section class="future" style="top: -20px; display: none;">
+	    <h2>Standard Libraries</h2>
+	    <ul style="line-height: 150%;">
+	      <li><a href="http://sourceforge.net/apps/mediawiki/cppunit/index.php?title=Main_Page" target="_blank">CppUnit</a> </li>
+	      <li><a href="http://code.google.com/p/googletest/" target="_blank">GoogleTest</a> </li>
+	      <li><a href="http://www.boost.org/doc/libs/1_57_0/libs/test/doc/html/index.html" target="_blank">Boost.Test</a> </li>
+	      <li><a href="https://launchpad.net/aeryn" target="_blank">Aeryn</a> </li>
+	      <li><a href="http://en.wikipedia.org/wiki/List_of_unit_testing_frameworks#C.2B.2B" target="_blank">and many more ...</a></li>
+	    </ul>
+	  </section>
+
+	  <section class="future" style="top: -20px; display: none;">
+	    <h2>Standard xUnit Approach</h2>
+	    <figure>
+	      <a href="http://junit.sourceforge.net/doc/cookstour/cookstour.htm" target="_blank">
+	      <img style="max-width: 100%" src="./index_files/xUnit.gif"></a>
+	      <figcaption>from <a href="http://junit.sourceforge.net/doc/cookstour/cookstour.htm" target="_blank">junit.sourceforge.net</a></figcaption></figure>
+	  </section>
+	  
+	  <section class="future" style="top: -20px; display: none;">
+	    <h2>State-of-the-Art Libraries</h2>
+	    <ul style="line-height: 150%;">
+	      <li><a href="https://github.com/philsquared/Catch" target="_blank">Catch</a> (C++03)</li>
+	      <li><a href="http://jimporter.github.io/mettle/" target="_blank">Mettle</a> (C++14)</li>
+	      <li><a href="https://github.com/martinmoene/lest" target="_blank">lest</a> (C++11)</li>
+	      <li><a href="http://banditcpp.org/" target="_blank">bandit</a> (C++11)</li>
+	    </ul>
+	  </section>
+
+	  <section class="future" style="top: -20px; display: none;">
+	    <h2>Meta-Programming</h2>
+	    <p><br></p>
+	    <i>Code Inlined</i>
+		<pre><code data-trim="" class="avrasm">//test inside the code <span class="keyword">in</span> C++<span class="number">11</span> <span class="keyword">or</span> with BOOST_STATIC_ASSERT <span class="keyword">in</span> C++<span class="number">03</span>
+<span class="label">std:</span>:static_assert( sizeof(small_t) &lt; sizeof(large_t) )<span class="comment">;</span></code></pre>
+	    <p><br></p>
+	    <i>Boost MPL Test Asserts</i>
+	    <pre><code data-trim="" class="cpp"><span class="preprocessor">#include "boost/mpl/assert.hpp"</span>
+
+BOOST_MPL_ASSERT( <span class="keyword">sizeof</span>(small_t) &lt; <span class="keyword">sizeof</span>(large_t) );
+
+BOOST_MPL_ASSERT_MSG( <span class="keyword">sizeof</span>(small_t) &lt; <span class="keyword">sizeof</span>(large_t) , 
+                      MESSAGE_THAT_WILL_BE_PRINTED);
+
+BOOST_MPL_ASSERT_NOT(( boost::is_same&lt; small_t,large_t &gt; ));
+
+BOOST_MPL_ASSERT_RELATION( <span class="keyword">sizeof</span>(small_t), &lt;, <span class="keyword">sizeof</span>(large_t) );</code></pre>
+	   </section>
+
+	</section>
+
+	<section hidden="" class="future" style="top: -276px; display: block;">
+	  <h2>Summary</h2>
+	  <ul style="line-height: 150%; font-size: 120%">
+	    <li class="fragment" data-fragment-index="0">real-world test-driven development has a learning curve</li>
+	    <li class="fragment" data-fragment-index="1">creates confidence and reproducibility</li>
+	    <li class="fragment" data-fragment-index="2">good software design step-by-step</li>
+	    <li class="fragment" data-fragment-index="3">a lot of tools available</li>
+	    <li class="fragment" data-fragment-index="4">no silver bullet!</li>
+	  </ul>
+	</section>
+
+	<section hidden="" class="future" style="top: -350px; display: block;">
+	<h2>Thank you for your attention!</h2>
+	<figure>
+	  <a href="http://upload.wikimedia.org/wikipedia/commons/7/7e/Sleeping_students.jpg">
+	    <img width="600" style="max-width: 60%" src="./index_files/Sleeping_students.jpg">
+	  </a>
+	  <figcaption>from <a href="http://upload.wikimedia.org/wikipedia/commons/7/7e/Sleeping_students.jpg" target="_blank">wikimedia.org</a>
+	  </figcaption>
+	</figure>
+	</section>
+
+	<section hidden="" class="future" style="top: -246px; display: block;">
+	  <h2>Literature</h2>
+	  <ul style="text-align: left;line-height: 150%;">
+	    <li>Robert C. Martin, <em>Agile Software Development: Principles, Patterns and Practices.</em> Pearson Education, 2002 </li>
+	    <li>Kent Beck, <em>Test-Driven Development by Example.</em> Addison-Wesley Longman, 2002</li>
+	    <li>Overload Magazine, <a href="http://accu.org/index.php/journals/c340/" target="_blank">Issue 122</a></li>
+	    <li>"<a href="http://www.levelofindirection.com/journal/2014/10/7/modern-c-testing.html" target="_blank">Modern C++ Testing</a>" by Phil Nash (author of catch)</li>
+	  </ul>
+	  </section>
+
+	  
+
+		</div>
+
+	<div class="backgrounds"><div class="slide-background present"></div><div class="slide-background future"></div><div class="slide-background future"><div class="slide-background present"></div><div class="slide-background future"></div><div class="slide-background future"></div><div class="slide-background future"></div><div class="slide-background future"></div><div class="slide-background future" data-background-hash="local/297b.jpgnullnullnullnullnullnull" style="background-image: url(http://idisk.mpi-cbg.de/~steinbac/resources/20141113/tdd_in_cpp/local/297b.jpg);"></div><div class="slide-background future"></div></div><div class="slide-background future"><div class="slide-background present"></div><div class="slide-background future"></div><div class="slide-background future"></div><div class="slide-background future"></div></div><div class="slide-background future"><div class="slide-background present"></div><div class="slide-background future"></div></div><div class="slide-background future"></div><div class="slide-background future"><div class="slide-background present"></div><div class="slide-background future"></div><div class="slide-background future"></div><div class="slide-background future"></div><div class="slide-background future"></div></div><div class="slide-background future"><div class="slide-background present"></div><div class="slide-background future"></div><div class="slide-background future"></div><div class="slide-background future"></div><div class="slide-background future"></div></div><div class="slide-background future"></div><div class="slide-background future"></div><div class="slide-background future"></div></div><div class="progress" style="display: block;"><span style="width: 0px;"></span></div><aside class="controls" style="display: block;"><div class="navigate-left"></div><div class="navigate-right enabled"></div><div class="navigate-up"></div><div class="navigate-down"></div></aside><div class="slide-number">0</div><div class="state-background"></div><div class="pause-overlay"></div></div>
+
+	<script src="./index_files/head.min.js"></script>
+	<script src="./index_files/reveal.min.js"></script>
+
+	<script>
+
+	  // Full list of configuration options available here:
+	  // https://github.com/hakimel/reveal.js#configuration
+	  Reveal.initialize({
+	  controls: true,
+	  progress: true,
+	  history: true,
+	  center: true,
+	  slideNumber: true,
+
+	  theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+	  transition: Reveal.getQueryHash().transition || 'default', // default/cube/page/concave/zoom/linear/fade/none
+
+	  // Parallax scrolling
+	  // parallaxBackgroundImage: 'https://s3.amazonaws.com/hakim-static/reveal-js/reveal-parallax-1.jpg',
+	  // parallaxBackgroundSize: '2100px 900px',
+
+	  // Optional libraries used to extend on reveal.js
+	  dependencies: [
+	  { src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+	  { src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+	  { src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+	  { src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+	  { src: 'plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+	  { src: 'plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }
+	  ]
+	  });
+
+	</script><script type="text/javascript" src="./index_files/highlight.js"></script><script type="text/javascript" src="./index_files/zoom.js"></script><script type="text/javascript" src="./index_files/notes.js"></script>
+
+
+
+</body></html>
