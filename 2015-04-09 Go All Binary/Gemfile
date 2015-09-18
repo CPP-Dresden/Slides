@@ -1,0 +1,7 @@
+source 'https://rubygems.org'
+
+gem 'asciidoctor'
+gem 'pygments.rb'
+gem 'tilt'
+gem 'slim'
+gem 'thread_safe' # recommended by asciidoctor

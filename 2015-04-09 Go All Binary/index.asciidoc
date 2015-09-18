@@ -1,0 +1,412 @@
+= Go All Binary
+Andreas Reischuck, Sebastian Rahner
+v1.0, 9. April 2015
+:description: binary should be so easy, it can be used everywhere
+:copyright: Andreas Reischuck
+:corpname: HicknHack{nbsp}Software GmbH
+:backend: dzslides
+:dzslides-aspect: 16-10
+:dzslides-style: asciidoctor
+:dzslides-transition: fade
+:dzslides-highlight: default
+:imagesdir: images
+:source-highlighter: highlightjs
+:docinfo:
+:email!:
+
+[.topic]
+== Go _All_ Binary
+
+image::Jons{sp}binary{sp}tattoo.jpg[role="middle", width="300"]
+
+[.intro.alt]
+== *Who* are{nbsp}we__?__
+
+[.topic]
+== !
+
+image::hicknhackLogo_new_text.png[role="middle", width="300"]
+
+[.topic]
+== Software Dienstleister
+
+[.incremental.normal.variants]
+* Individuelle Software Lösungen
+* Modernste Technologien
+* In Dresden, für Dresden
+
+[.topic]
+== Sebastian Rahner
+
+image::SebastianRahner.png[role="centered",width="230"]
+
+[.center]
+* Live Coding
+
+[.topic]
+== Andreas Reischuck
+
+image::AndreasReischuck.jpg[role="centered", width="230"]
+
+[.center]
+* Slide Jockey
+
+[.topic]
+== binary
+
+image::Binary.jpg[width="700"]
+
+[.intro]
+== a _history_ lesson
+
+[.topic]
+== *17xx* Drehorgel
+
+image::Drehorgelmann.jpg[width="700"]
+
+[.topic]
+== Instructions
+
+image::Für{sp}Elise.jpg[width="700"]
+
+[.topic]
+== *1725* Webstühle
+
+image::Hanging{sp}out{sp}with{sp}Ammu,{sp}Abhijit,and{sp}Hassath.jpg[width="700"]
+
+[.topic]
+== *1890* US Census
+
+image::1024px-IBM1130CopyCard.agr.jpg[PunchCard, width="700"]
+
+[.intro.alt]
+== *Text* Encoding?
+
+[.topic]
+== {nbsp}
+
+image::1024px-IBM1130CopyCard.agr.jpg[PunchCard, width="700"]
+
+[.intro]
+== _Back to_ *2015*
+
+[.topic]
+== What changed?
+
+[.incremental]
+* *much* more data
+* *much* more variety
+* image:Cute{sp}kitty.jpg[width="450"]
+
+[.intro]
+== _Binary_ still hard
+
+[.question]
+== !
+
+Standards for rescue__?__
+
+[.secret]
+== !
+
+[quote.small.statement, http://www.standardize.me/]
+Standards are good, everyone should have one.
+
+[.intro.acronym]
+== ASN1
+
+[.topic]
+== __A__bstract __S__yntax __N__otation One
+
+* LDAP
+* SNMP
+
+[.intro]
+== Protobuf
+
+[.topic]
+== Protocol Buffers
+
+* Google's data interchange format
+
+[source,protobuf]
+message Person {
+  required string name = 1;
+  required int32 id = 2;
+  optional string email = 3;
+}
+
+[.intro]
+== *_No_* breaktough yet
+
+[.intro.alt]
+== What else__?__
+
+[.question]
+== !
+
+Text-Formats for rescue__?__
+
+[.intro.acronym]
+== HTTP
+
+[.topic]
+== __H__yper__T__ext __T__ransfer __P__rotocol
+
+[source,http]
+GET /infotext.html HTTP/1.1
+Host: www.example.net
+
+[.source]
+== !
+
+[source,http]
+GET /wiki/Hypertext_Transfer_Protocol HTTP/1.1
+Host: de.wikipedia.org
+Accept: text/html,application/xhtml+xml,application/...
+Accept-encoding: gzip, deflate, sdch
+Accept-language: de-DE,de;q=0.8,en-US;q=0.6,en;q=0.4
+Cache-control: max-age=0
+Cookie: GeoIP=DE:Berlin:52.5167:13.4000:v4; uls-...
+Dnt: 1
+If-modified-since: Fri, 03 Apr 2015 08:12:13 GMT
+Referer: https://www.google.de/
+User-agent: Mozilla/5.0 (Windows NT 6.3; Win64; x64)...
+
+[.intro.acronym]
+== SMTP / MIME
+
+[.topic]
+== SMTP / MIME
+
+[.normal]
+* __S__imple __M__ail __T__ransfer __P__rotocol
+* __M__ultipurpose __I__nternet __M__ail __E__xtensions
+
+[source,smtp,subs="normal"]
+[.hljs-keyword]#HELO# foobar.example.net
+[.hljs-keyword]#MAIL# FROM:sender@example.com
+[.hljs-keyword]#RCPT# TO:receier@example.com
+[.hljs-keyword]#DATA#
+...
+
+[.intro.acronym]
+== JSON / YAML
+
+[.topic]
+== Semi-structured data
+
+[.normal]
+* __J__ava__S__cript __O__bject __N__otation
+* __Y__AML __A__in't __M__arkup __L__anguage
+
+[source,json]
+[
+  {
+    "title": "apples",
+    "sensitive": false,
+    "count": [12000, 2.0],
+    "description": {"text": "..."}
+  }
+]
+
+[.secret]
+== !
+
+[.statement]
+How to encode a date__?__
+
+[.topic]
+== Benefits
+
+[.statement]
+--
+* Readable
+[.incremental]
+** for __small__ examples
+--
+
+[.topic]
+== Troubles
+
+[.incremental]
+* _text_ encoding
+* embedding binary
+* parsing efforts
+
+[.intro]
+== The _Internet_ is built on that
+
+== !
+
+image::Insane{sp}Cairns{sp}-{sp}Boulder{sp}Colorado.jpg[width="700"]
+
+[.topic]
+== Try to change this__!__
+
+image::Le{sp}cairn{sp}3{sp}du{sp}Mont{sp}Ventoux{sp}8.jpg[width="700"]
+
+[.intro]
+== We need__...__
+
+[.topic]
+== Solid foundations
+
+image::Mexico-6093{sp}-{sp}Structure{sp}10.jpg[width="700"]
+
+[.topic]
+== That last
+
+image::Pyramids.jpg[width="700"]
+
+[.question]
+== !
+
+Let's recap__!__
+
+* fast __&__ small
+* easy to
+** build upon
+** extend
+** debug
+
+[.intro]
+== Make binary easy
+
+*Strategy*
+
+[.intro]
+== Go *all* binary
+
+[.question]
+== !
+
+Are we binary natives__?__
+
+image::binary{sp}face{sp}man.jpg[role="middle",width="300"]
+
+[.intro]
+== **no**
+
+[.title]
+== !
+
+image::Madison{sp}in{sp}binary{sp}blanket.jpg[width="800"]
+
+[.intro]
+== *Binary* is _not_ for humans
+
+== !
+
+image:Social{sp}Media{sp}Information{sp}Overload.png[width="480"]
+
+[.intro.alt]
+== We need text__!__
+
+[.intro]
+== Describe once
+
+[.green]*Idea*
+
+{nbsp}
+
+[.incremental]
+& _generate everything_
+
+[.intro]
+== __(__De-__)__Serializer
+
+*Generate*
+
+[.intro]
+== Documentation
+
+*Generate*
+
+[.intro]
+== Debugger-Tools
+
+*Generate*
+
+[.intro.alt]
+== How__?__
+
+[.intro]
+== Protocol Generator
+
+*The*
+
+[.topic]
+== Example
+
+[source,cpp,subs="normal"]
+----
+[.hljs-keyword]#byteorder-be protocol# [.hljs-title]#Example#
+
+[.hljs-annotation]#@entry#
+struct Paket {
+  4 : int32 count
+  * : Data data[count]
+}
+
+struct Data {
+  4 : float value
+}
+----
+
+[.topic]
+== Descriptive Language
+
+image::Code.png[role="middle",width="700"]
+
+[.intro]
+== Live Demo
+
+[.green]*Let's see a*
+
+[.intro]
+== What's next?
+
+[.topic]
+== Enter the Matrix
+
+image::Enter{sp}The{sp}Matrix.jpg[width="700"]
+
+[.intro]
+== Feedback
+
+[.topic]
+== https://generator.hicknhack.com
+
+[.incremental]
+* Tell everyone
+* Try it
+* Discuss with us
+* Show your protocols
+* &nbsp;
+* => a better __binary__ world
+
+[.intro.alt]
+== Questions__?__
+
+[.topic]
+== Bildquellen
+
+[.directory]
+--
+1. Jo Morcom "Jons binary tattoo" CC BY-NC-ND 2.0 - https://www.flickr.com/photos/johannahobbs/2157489719
+1. Michael Coghlan "Binary" CC BY-SA 2.0 - https://www.flickr.com/photos/mikecogh/6548458203
+1. baerchen57 "Drehorgelmann" CC BY-NC-SA 2.0 - https://www.flickr.com/photos/baerchen57/3411649105
+1. Alexander Mathéus "Für Elise" CC BY-ND 2.0 - https://www.flickr.com/photos/ausloggen/8596127330
+1. quinn norton "Hanging out with Ammu, Abhijit,and Hassath" CC BY-NC-SA 2.0 - https://www.flickr.com/photos/quinn/326571038
+1. Arnold Reinhold "IBM1130CopyCard" CC BY-SA 2.0 - https://commons.wikimedia.org/wiki/File:IBM1130CopyCard.agr.jpg
+1. Mariel Peñafiel "Cute kitty" CC BY 2.0 - https://www.flickr.com/photos/stellar-yelly/5280242231
+1. Dave Dugdale "Insane Cairns - Boulder Colorado" CC BY-SA 2.0 - https://www.flickr.com/photos/davedugdale/4918425465
+1. François Arnal "Le cairn 3 du Mont Ventoux 8" CC BY-NC-SA 2.0 - https://www.flickr.com/photos/jardindemarandon/14120384572
+1. Dennis Jarvis "Mexico-6093 - Structure 10" CC BY-SA 2.0 - https://www.flickr.com/photos/archer10/4663121796
+1. Wilhelm Joys Andersen "Pyramids" CC BY-SA 2.0 - https://www.flickr.com/photos/wilhelmja/4233621517
+1. adrigu "binary face man" CC BY 2.0 - https://www.flickr.com/photos/97793800@N00/6815255634
+1. James Thompson "Madison in binary blanket" CC BY 2.0 - https://www.flickr.com/photos/jwthompson2/477308079
+1. Mark Smiciklas "Social Media Information Overload" CC BY-NC 2.0 - https://www.flickr.com/photos/intersectionconsulting/7537238368
+1. Squiggle "Enter The Matrix" CC BY-NC-SA 2.0 - https://www.flickr.com/photos/stephenr/405024158
+--

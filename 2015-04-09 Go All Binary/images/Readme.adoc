@@ -1,0 +1,20 @@
+== Bildquellen
+
+[.directory]
+--
+1. Jo Morcom "Jons binary tattoo" CC BY-NC-ND 2.0 - https://www.flickr.com/photos/johannahobbs/2157489719
+1. Michael Coghlan "Binary" CC BY-SA 2.0 - https://www.flickr.com/photos/mikecogh/6548458203
+1. baerchen57 "Drehorgelmann" CC BY-NC-SA 2.0 - https://www.flickr.com/photos/baerchen57/3411649105
+1. Alexander Mathéus "Für Elise" CC BY-ND 2.0 - https://www.flickr.com/photos/ausloggen/8596127330
+1. quinn norton "Hanging out with Ammu, Abhijit,and Hassath" CC BY-NC-SA 2.0 - https://www.flickr.com/photos/quinn/326571038
+1. Arnold Reinhold "IBM1130CopyCard" CC BY-SA 2.0 - https://commons.wikimedia.org/wiki/File:IBM1130CopyCard.agr.jpg
+1. Mariel Peñafiel "Cute kitty" CC BY 2.0 - https://www.flickr.com/photos/stellar-yelly/5280242231
+1. Dave Dugdale "Insane Cairns - Boulder Colorado" CC BY-SA 2.0 - https://www.flickr.com/photos/davedugdale/4918425465
+1. François Arnal "Le cairn 3 du Mont Ventoux 8" CC BY-NC-SA 2.0 - https://www.flickr.com/photos/jardindemarandon/14120384572
+1. Dennis Jarvis "Mexico-6093 - Structure 10" CC BY-SA 2.0 - https://www.flickr.com/photos/archer10/4663121796
+1. Wilhelm Joys Andersen "Pyramids" CC BY-SA 2.0 - https://www.flickr.com/photos/wilhelmja/4233621517
+1. adrigu "binary face man" CC BY 2.0 - https://www.flickr.com/photos/97793800@N00/6815255634
+1. James Thompson "Madison in binary blanket" CC BY 2.0 - https://www.flickr.com/photos/jwthompson2/477308079
+1. Mark Smiciklas "Social Media Information Overload" CC BY-NC 2.0 - https://www.flickr.com/photos/intersectionconsulting/7537238368
+1. Squiggle "Enter The Matrix" CC BY-NC-SA 2.0 - https://www.flickr.com/photos/stephenr/405024158
+--
