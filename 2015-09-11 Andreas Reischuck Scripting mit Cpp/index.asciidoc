@@ -1,0 +1,644 @@
+= Scripting mit C++
+Andreas Reischuck <andreas.reischuck@hicknhack-software.com>
+v1.0, 10. September 2015
+:notitle:
+:description: Chaiscript, Lua, CppScript
+:copyright: Andreas Reischuck
+:corpname: HicknHack Software GmbH
+:backend: dzslides
+:dzslides-aspect: 16-10
+:dzslides-style: asciidoctor
+:dzslides-transition: vertical-slide
+:dzslides-highlight: default
+:imagesdir: images
+:source-highlighter: highlightjs
+:docinfo:
+:email!:
+
+== !
+
+Dresden-Weekly
+
+image::hacking.jpg[width=300, role="pull-right"]
+
+[.incremental]
+* Mittwoch, 18:00
+* im C3D2 Hackerspace
+* 16. September 2015
+
+== !
+
+Scripting mit C++
+
+[.small]
+> In search for the best solution
+
+[.bigger]
+C++ User Group Dresden - 10.09.2015
+
+[.intro]
+== To Script *or* _not_ to Script?
+
+[.intro]
+== Use Cases
+
+== !
+
+[.statement]
+Komplexes Framework
+
+== !
+
+[.statement]
+Inner Platform
+
+== !
+
+[.statement]
+User Interaktionen
+
+[.intro]
+== Anwendungsfall
+
+== !
+
+[.statement]
+Twofold
+
+== !
+
+[.statement]
+Templates
+
+== !
+
+Templates?
+
+[source.bigger,erb]
+.ERB (Embedded Ruby)
+----
+Hello <%= name %>!
+----
+
+[source.bigger,slim]
+.Slim (Ruby)
+----
+Hello #{name}!
+----
+
+[source.bigger,smarty]
+.smarty (PHP)
+----
+Hello {$name}!
+----
+
+[.recap]
+== Focus Wechsel
+
+Templates =>
+
+[.incremental]
+* *Algorithmus*
+
+[.incremental]
+* Textausgabe
+
+[.question]
+== !
+
+[.middle]
+_Quellcode_ generieren[.bigger]__?__
+
+[.source]
+== !
+
+[source,liquid]
+----
+{%  for field in struct.fieldList %}
+{%    with field.fieldType as fieldType %}
+{%      if fieldType.isBitfield %}
+{%        if field.name%}
+  , m_{{field.name}}(new {{fieldType.name}})
+{%        else %}
+  , m_{{fieldType.name}}Data(new {{fieldType.name}}Data)
+{%        endif %}
+{%      endif %}
+{%      if fieldType.isEnum %}
+{%        if field.isInitialized %}
+{%          if field.initializerReference.isField and field.initializerReference.field.isEnumValueField %}
+  , m_{{field.name}}({{field.initializerReference.field.name}})
+{%          endif %}
+{%          if field.initializerReference.isLiteral %}
+  , m_{{field.name}}(static_cast<{{fieldType.name}}>({{field.initializerReference.literal.value}}))
+{%          endif %}
+{%        else %}
+        , m_{{field.name}}()
+{%        endif %}
+----
+
+[.incremental.overlay.expression]
+Code anywhere *?*
+
+[.secret]
+== !
+
+Idee:
+
+* Twofold
+
+Das beste aus _beiden_ Welten
+
+== !
+
+Script &
+
+[.small.incremental]
+====
+[.bigger]*4* Ergänzungen::
+* *\* -> ohne Zeilenumbruch
+* *|* -> mit Zeilenumbruch
+* *#* -> include "file.twofold"
+* *=* -> einrückendes Script
+====
+
+[.incremental.recap]
+visuelle Trennung__.__
+
+[.source]
+== !
+
+[source,javascript,subs=quotes]
+----
+struct.fieldList.forEach(function (field) {
+  if (field.isSkipped) return;
+  var fieldType = field.fieldType;
+  var initializer = field.initializerReference;
+
+  if (fieldType.isBitfield) {
+                  *|*    , m_\#{bitfieldName(field)}(new #{bitfieldTypeName(field)})
+  }
+  else if (fieldType.isEnum) {
+    if (field.isInitialized) {
+      if (initializer.isField && initializer.field.isEnumValueField) {
+                  *|*    , m_#{field.name}(\#{initializer.field.name})
+      }
+      else if (initializer.isLiteral) {
+        var value = initializer.literal.value;
+                  *|*    , m_#{field.name}(static_cast<\#{fieldType.name}>(#{value}))
+      }
+    }
+    else {
+                  *|*    , m_#{field.name}()
+    }
+  }
+}
+----
+
+[.source]
+== !
+
+Einrückungen
+
+[source.bigger.incremental,javascript]
+----
+function greeter(name) {
+  |  <h1>Hello #{name}!</h1>
+}
+----
+[source.bigger.incremental,javascript]
+----
+  |<!-- compare -->
+  =  greeter("C++ Dresden")
+----
+
+[.small]
+&nbsp;
+
+[.small.bigger.incremental]
+Akkumuliert zu 4 Leerzeichen
+
+[source.bigger.incremental,html]
+----
+<!-- compare -->
+    <h1>Hello C++ Dresden!</h1>
+----
+
+== !
+
+SourceMaps
+
+[.incremental]
+* Twofold <==> Javascript
+
+[.incremental]
+* Twofold <==> Resultat
+
+[.intro]
+== *How* to _implement_ that?
+
+[.intro]
+== Erster Versuch
+
+== !
+
+[.statement]
+Qt[.incremental]__Script__
+
+[.incremental.recap]
+deprecated__:(__
+
+[.source]
+== !
+
+[source,cpp]
+----
+auto engine = QScriptEngine();
+----
+
+[source.incremental,cpp,subs=quotes]
+----
+auto global = engine.globalObject();
+for (auto key : **inputs**.keys())
+    global.setProperty(key, engine.toScriptValue(inputs[key]));
+----
+
+[source.incremental,cpp]
+----
+auto templateApi = TemplateApi();
+global.setProperty("_template", engine.newQObject(&templateApi));
+----
+
+[source,cpp]
+----
+engine.evaluate(javascript);
+----
+
+[source.incremental,cpp]
+----
+// templateApi contains results
+----
+
+[.source]
+== !
+
+[source,cpp]
+----
+class TemplateApi : public QObject {
+    Q_OBJECT
+----
+
+[source.incremental,cpp]
+----
+public:
+    SourceMapAndText build() const;
+----
+
+[source.incremental,cpp]
+----
+public slots:
+    void append(const QString &text, int originIndex);
+    void newLine();
+    // ...
+----
+
+[source,cpp]
+----
+private:
+    // State
+};
+----
+
+[.intro]
+== *low* _performance_
+
+== !
+
+Quellcode für ein ordentliches Protokoll
+
+*1,5* Sekunden
+
+[.intro]
+== _type_ conversions
+
+[.secret]
+== !
+
+Idee:
+
+* _C++_ Script
+
+[.intro]
+== __Chai__Script
+
+== !
+
+Projekt von *Jason Turner* +
+alias *lefticus*
+
+http://chaiscript.com/
+
+*1.0.0* am 13. Juli 2009
+aktuell: *5.7.1*
+
+[.intro]
+== Eigenschaften
+
+== !
+
+[.statement]
+C++ Types
+
+== !
+
+[.statement]
+Dynamic Typing
+
+== !
+
+[.statement]
+Function Overloading
+
+== !
+
+[.statement]
+Type Conversion
+
+== !
+
+[.statement]
+Thread Safe
+
+[.intro]
+== Verwendung
+
+[.source]
+== !
+
+[source,cpp]
+----
+auto chai = chaiscript::ChaiScript();
+----
+
+[source.incremental,cpp,subs=quotes]
+----
+for (const auto &v : **inputs**)
+    m_chai.add_global(v.second, v.first);
+----
+
+[source.incremental,cpp]
+----
+auto templateApi = TemplateApi();
+chai.add(TemplateApi::module());
+chai.add_global(chaiscript::var(&templateApi), "_template");
+----
+
+[source,cpp]
+----
+chai.eval(script);
+----
+
+[source.incremental,cpp]
+----
+// templateApi contains results
+----
+
+[.source]
+== !
+
+[source,cpp]
+----
+class TemplateApi {
+----
+
+[source.incremental,cpp]
+----
+public:
+    SourceMapAndText build() const;
+----
+
+[source.incremental,cpp]
+----
+    void append(const std::string &text, int originIndex);
+    void newLine();
+    // ...
+----
+
+[source.incremental,cpp]
+----
+    using Module = std::shared_ptr<chaiscript::Module>;
+    static Module module();
+----
+
+[source,cpp]
+----
+private:
+    // State
+};
+----
+
+== !
+
+[source,cpp]
+----
+TemplateApi::Module TemplateApi::module()
+{
+    auto module = std::make_shared<chaiscript::Module>();
+    chaiscript::utility::add_class<TemplateApi>(
+        *module,
+        "TemplateApi",
+        {},
+        {
+            { chaiscript::fun(&append), "append" },
+            { chaiscript::fun(&newLine), "newLine" },
+            // ...
+        });
+    return module;
+}
+----
+
+[.intro]
+== Performance**__?__**
+
+== !
+
+Bisher nur synthetische Benchmarks
+
+[.incremental]
+* Aktuell ~_25%_ schneller
+* + weiter optimierbar
+
+== !
+
+Probleme
+
+[.incremental]
+* Compile Time
+* Große Standard Library
+* Unicode Handling
+
+[.intro]
+== Go _deeper_
+
+[.intro]
+== Let's build *Script*
+
+== !
+
+Parts:
+
+[.incremental]
+* Parse Script
+* Register C++ Functions
+* Store dynamic typed Values
+* Match *&* Call Function
+
+[.intro]
+== dynamical __typed__ *values*
+
+[.source]
+== !
+
+[source,cpp]
+----
+class Boxed {
+public:
+----
+
+[source.incremental,cpp]
+----
+    template<typename T> explicit Boxed(T v)
+----
+
+[source.incremental,cpp]
+----
+        : m_value( std::make_shared<Any<T>>(v) )
+    {}
+----
+
+[source.incremental,cpp]
+----
+    template<typename T> T get() const;
+----
+
+[source.incremental,cpp]
+----
+    template<typename T> bool is() const;
+----
+
+[source.incremental,cpp]
+----
+private:
+    std::shared_ptr<AnyBase> m_value;
+----
+
+[source,cpp]
+----
+};
+----
+
+[.source]
+== !
+
+[source,cpp]
+----
+class AnyBase {
+public:
+----
+
+[source.incremental,cpp]
+----
+    virtual void* data() const = 0;
+    virtual std::shared_ptr<AnyBase> clone() const = 0;
+----
+
+[source,cpp]
+----
+};
+----
+
+[.source]
+== !
+
+[source,cpp]
+----
+template<typename T>
+class Any : public AnyBase {
+public:
+----
+
+[source.incremental,cpp]
+----
+    explicit Any(T v)
+        : m_data(v)
+    {}
+----
+
+[source.incremental,cpp]
+----
+    void* data() const { return (void*)m_data; }
+----
+
+[source.incremental,cpp]
+----
+    std::shared_ptr<AnyBase> clone() const {
+      return std::make_shared< Any<T> >(m_data);
+    }
+----
+
+[source.incremental,cpp]
+----
+private:
+    T m_data;
+----
+
+[source,cpp]
+----
+};
+----
+
+[.intro]
+== next steps
+
+== !
+
+[.statement]
+Typ Konvertierungen
+
+== !
+
+[.statement]
+...
+
+== !
+
+Github
+
+* https://github.com/hicknhack-software/Twofold-Qt[Twofold-Qt]
+
+[.incremental]
+====
+* https://github.com/ChaiScript/ChaiScript[Chaiscript]
+* https://github.com/hicknhack-software/Twofold-Chaiscript[Twofold-Chaiscript]
+====
+
+[.ending]
+== !
+
+Fragen [.bigger]**?**
+
+[.footer]
+Andreas Reischuck
+@arBmind
+
+== !
+
+Nächstes Treffen
+
+image::cppug.png[width=300, role="pull-right"]
+
+[.incremental]
+* 8. Oktober _??_
+
+[.incremental]
+* Jochen Topf
+* _Catch_ Testing
