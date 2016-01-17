@@ -1,0 +1,33 @@
+#require 'erb'
+require 'asciidoctor'
+require 'asciidoctor/cli'
+require 'asciidoctor-diagram'
+#require 'tilt/asciidoc'
+
+invoker = Asciidoctor::Cli::Invoker.new(%W(-T asciidoctor-backends -E slim -D out index.asciidoc))
+
+guard :shell do
+ watch('index.asciidoc') { |m| invoker.invoke! }
+ watch('index-docinfo.html') { |m| invoker.invoke! }
+end
+
+guard :rack, host: '0.0.0.0' do
+ watch('Gemfile.lock')
+ watch('config.ru')
+end
+
+guard :copy, from: 'out', to: '/vagrant/out', absolute: true, mkpath: true, run_at_start: true, delete: true do
+ watch(/index\.html/)
+ watch(/images\/.*(?<!cache)$/)
+end
+
+invoker.invoke!
+
+guard :copy, from: 'images', to: 'out/images', run_at_start: true do
+ watch(/.*/)
+end
+
+guard :livereload do
+ watch('out/index.html')
+ watch(/out\/images\/.*/)
+end

@@ -1,0 +1,46 @@
+ANSIBLE_VERSION="1.9.4"
+
+Vagrant.configure(2) do |config|
+  config.vm.box = "ubuntu/trusty64"
+
+  config.vm.network :forwarded_port, guest: 9292, host: 9292 # rack http
+  config.vm.network :forwarded_port, guest: 35729, host: 35729 # livereload
+  config.ssh.insert_key = false
+
+  config.vm.provision "shell" do |shell|
+    shell.inline = <<SCRIPT
+if [ -x "$(command -v ansible)" ]; then
+  if ansible --version | grep 'ansible #{ANSIBLE_VERSION}'; then
+    exit 0
+  fi
+fi
+if [ "$(date +%F-%H)" != "date -r /var/lib/apt/periodic/update-success-stamp +%F-%H" ]; then
+  echo -e "${GREEN}Updating apt cache${NORMAL}"
+  with_root apt-get update -qq
+fi
+echo -e "installing ansible #{ANSIBLE_VERSION}"
+sudo apt-get install python-pip -y
+sudo pip install --upgrade ansible==#{ANSIBLE_VERSION}
+SCRIPT
+  end
+
+  # buggy with vagrant 1.8.1 (fixed with 1.8.2)
+  config.vm.provision "ansible_local" do |ansible|
+    ansible.install = false # this would install the wrong version
+    ansible.version = ANSIBLE_VERSION
+    ansible.playbook = "playbook.yml"
+    ansible.verbose = "vv"
+  end
+
+  config.vm.synced_folder ".", "/vagrant"
+  config.vm.synced_folder ".", "/vagrant-rsync", type: "rsync",
+    rsync__exclude: [".git/", "Gemfile.lock", "out/"]
+
+  config.vm.provider "virtualbox" do |v|
+    v.memory = 1024
+    v.cpus = 2
+  end
+end
+
+# run:
+#   vagrant rsync-auto

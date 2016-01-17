@@ -1,0 +1,58 @@
+- name: install
+  hosts: all
+  sudo: true
+  tasks:
+  - name: install packages
+    apt:
+      name: "{{ item }}"
+      update_cache: yes
+      state: latest
+      cache_valid_time: 86400
+    with_items:
+    - ruby2.0
+    - ruby2.0-dev
+    - libssl-dev
+    - graphviz
+    - python-pip
+    - python-cairo
+    - python-gtk2
+
+  - name: default ruby2.0
+    alternatives:
+      name: ruby
+      link: /usr/bin/ruby
+      path: /usr/bin/ruby2.0
+
+  - name: default gem2.0
+    alternatives:
+      name: gem
+      link: /usr/bin/gem
+      path: /usr/bin/gem2.0
+
+  - name: install bundler
+    gem:
+      name: bundler
+      user_install: no
+
+  - name: pip install
+    pip:
+      name: shaape
+
+- name: user tasks
+  hosts: all
+  tasks:
+  - name: bundle install
+    command: bundle install
+    args:
+      chdir: /vagrant-rsync
+    register: rails_bundle_result
+    changed_when: >
+      rails_bundle_result.stdout is defined
+      and 'Installing' in rails_bundle_result.stdout
+
+#  - name: run
+#    command: bundle exec guard -d --no-interactions
+#    args:
+#      chdir: /vagrant-rsync
+#    tags:
+#    - run

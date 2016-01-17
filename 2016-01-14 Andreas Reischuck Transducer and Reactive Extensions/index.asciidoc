@@ -1,0 +1,846 @@
+﻿= Transducer & Reactive Extensions
+Andreas Reischuck <andreas.reischuck@hicknhack-software.com>
+v1.0, 14. Januar 2016
+:notitle:
+:description: Besser Programmieren?
+:copyright: Andreas Reischuck
+:corpname: HicknHack Software GmbH
+:backend: dzslides
+:dzslides-aspect: 16-10
+:dzslides-style: asciidoctor
+:dzslides-transition: vertical-slide
+:dzslides-highlight: default
+:imagesdir: images
+:source-highlighter: highlightjs
+:docinfo:
+:email!:
+
+== !
+
+Transducer & Reactive Extensions
+
+[.small]
+> Besser Programmieren?
+
+[.bigger]
+C++ User Group Dresden - 14.01.2016
+
+[.intro]
+== Wie alles begann
+
+== Rich Hickey
+
+image::RichHickey.jpg[width=600]
+
+[.image]
+== !
+
+image::TheGoal.jpg[width=800]
+
+[.intro]
+== Reactive Extensions
+
+== !
+
+[.small]
+> The Reactive Extensions (Rx) is a library for composing asynchronous and event-based programs using observable sequences and LINQ-style query operators.
+
+== !
+
+Viele Sprachen
+
+[.incremental]
+* C# (.Net)
+* C++
+* Javascript
+* Python
+* Ruby
+* ...
+
+[.intro]
+== Beispiel
+
+[.source]
+== !
+
+[source.incremental,js]
+.Javascript
+----
+var source = getAsyncStockData(); // Get stock data somehow
+----
+
+[source.incremental,js]
+----
+var subscription = source
+  .filter(function (quote) {
+    return quote.price > 30;
+  })
+----
+
+[source.incremental,js]
+----
+  .map(function (quote) {
+    return quote.price;
+  })
+----
+
+[source.incremental,js]
+----
+  .subscribe(
+    function (price) {
+      console.log('Prices higher than $30: $' + price);
+    },
+----
+
+[source.incremental,js]
+----
+    function (err) {
+      console.log('Something went wrong: ' + err.message);
+    });
+----
+
+[.intro]
+== Und in echt ?
+
+[.intro]
+== Multi Touch Zoom
+
+[.image]
+== !
+
+image::multitouch-pinch-zoom-image.png[width=800]
+
+[.source]
+== !
+
+[source,cpp]
+----
+class MultiPinchArea : public QQuickItem
+{
+  Q_OBJECT
+----
+
+[source.incremental,cpp]
+----
+public:
+  MultiPinchArea(QQuickItem *parent=0);
+  ~MultiPinchArea();
+
+  Q_INVOKABLE QPointF center() const;
+  Q_INVOKABLE QPointF relativeMovement() const;
+  Q_INVOKABLE float scale() const;
+  Q_INVOKABLE float relativeScale() const;
+----
+
+[source.incremental,cpp]
+----
+signals:
+  void pinchStarted();
+  void pinchUpdated();
+  void pinchFinished();
+----
+
+[source.incremental,cpp]
+----
+protected:
+  void touchEvent(QTouchEvent *event) override;
+----
+
+[source,cpp]
+----
+};
+----
+
+[.source]
+== !
+
+[source,cpp]
+.QTouchEvent Interface
+----
+class QTouchEvent : public QInputEvent
+{
+public:
+----
+
+[source.incremental,cpp]
+----
+  class TouchPoint
+  {
+  public:
+    Qt::TouchPointState state() const;
+    QPointF pos() const;
+    QPointF scenePos() const;
+    // ...
+  };
+----
+
+[source.incremental,cpp]
+----
+  Qt::TouchPointStates touchPointStates() const;
+  const QList<TouchPoint> &touchPoints() const;
+----
+
+[source,cpp]
+----
+};
+----
+
+[.source]
+== !
+
+[source,cpp]
+.PinchArgs
+----
+struct PinchArgs
+{
+----
+
+[source.incremental,cpp]
+----
+  QTouchEvent *event;
+  QPointF center;
+  double diameter = 0;
+  int count = 0;
+----
+
+[source.incremental,cpp]
+----
+  PinchArgs(QTouchEvent *event);
+----
+
+[source.incremental,cpp]
+----
+  PinchArgs(QTouchEvent *event,
+            QPointF center,
+            double diameter = 0,
+            int count = 0);
+----
+
+[source,cpp]
+----
+};
+----
+
+[.intro]
+== Transduce it!
+
+[.source]
+== !
+
+[source,cpp]
+----
+auto pinchTransform = [](QTouchEvent *event) -> PinchArgs {
+----
+
+[source.incremental,cpp]
+----
+  auto touchPoints = event->touchPoints();
+----
+
+[source.incremental,cpp]
+----
+  auto isPresent = [](auto touchPoint) {
+    return touchPoint.state() != Qt::TouchPointReleased;
+  };
+----
+
+[source.incremental,cpp]
+----
+  auto count_rf = [](auto count, auto) {
+    return count + 1;
+  };
+----
+
+[source.incremental,cpp]
+----
+  auto count = transduce(filter(isPresent), count_rf, 0, touchPoints);
+----
+
+[source.incremental,cpp]
+----
+  if (0 == count) {
+    return PinchArgs(event);
+  }
+----
+
+[source.incremental,cpp]
+----
+  // continue next slide ...
+----
+
+[source,cpp]
+----
+};
+----
+
+[.source]
+== !
+
+[source,cpp]
+----
+auto pinchTransform = [](QTouchEvent *event) -> PinchArgs {
+  // continue from previous slide ...
+----
+
+[source.incremental,cpp]
+----
+  auto point = [](auto touchPoint) {
+    return touchPoint.scenePos();
+  };
+----
+
+[source.incremental,cpp]
+----
+  auto sum_rf = [](auto a, auto b) {
+    return a + b;
+  };
+----
+
+[source.incremental,cpp]
+----
+  auto point_sum = transduce(
+      comp(filter(isPresent), map(point)),
+      sum_rf, QPointF(0,0), touchPoints);
+----
+
+[source.incremental,cpp]
+----
+  auto center = point_sum / count;
+----
+
+[source.incremental,cpp]
+----
+  // continue next slide ...
+----
+
+[source,cpp]
+----
+};
+----
+
+[.source]
+== !
+
+[source,cpp]
+----
+auto pinchTransform = [](QTouchEvent *event) -> PinchArgs {
+  // continue from previous slide ...
+----
+
+[source.incremental,cpp]
+----
+  auto center_distance = [center](auto point) {
+    auto pointDistance = point - center;
+    return QVector2D(qAbs(pointDistance.x()), qAbs(pointDistance.y()));
+  };
+----
+
+[source.incremental,cpp]
+----
+  auto distance_sum = transduce(
+      comp(filter(isPresent), map(point), map(center_distance)),
+      sum_rf, QVector2D(0,0), touchPoints);
+----
+
+[source.incremental,cpp]
+----
+  auto diameter = 2 * distance_sum.length() / count;
+----
+
+[source.incremental,cpp]
+----
+  return { event, center, diameter, count };
+----
+
+[source,cpp]
+----
+};
+----
+
+[.intro]
+== _Transducers_ *Yeah!*
+
+[.intro]
+== *_How_* to connect the *rest?*
+
+== !
+
+[.incremental]
+* Transducers cannot join
+* Use reactive Extensions
+
+== !
+
+[source.incremental,cpp]
+.Subject
+----
+private:
+  rxcpp::subjects::subject<QTouchEvent*> m_touchEventSubject;
+----
+
+[source.incremental,cpp]
+.Subscriber
+----
+void MultiPinchArea::touchEvent(QTouchEvent *event)
+{
+  m_touchEventSubject.get_subscriber().on_next(event);
+}
+----
+
+[source.incremental,cpp]
+.Observable
+----
+MultiPinchArea::MultiPinchArea(QQuickItem *parent)
+  : QQuickItem(parent)
+{
+  auto pinchTransform = [](QTouchEvent *event) -> PinchArgs { /* ... */ };
+  auto touchArgs = m_touchEventSubject.get_observable().map(pinchTransform);
+----
+
+[source.incremental,cpp]
+----
+  // TODO
+----
+
+[.notransition]
+== !
+
+Touch Tracking States
+
+[graphviz, touch-state-machine0, svg, width=600]
+----
+digraph g {
+  rankdir=LR;
+  Idle -> Tracking [label="Start", style=invis];
+  Tracking -> Tracking [label="Reset", style=invis];
+  Tracking -> Idle [label="End", style=invis];
+  Idle [peripheries=2]
+  Tracking [style=invis]
+}
+----
+
+[.notransition]
+== !
+
+Touch Tracking States 1
+
+[graphviz, touch-state-machine1, svg, width=600]
+----
+digraph g {
+  rankdir=LR;
+  Idle -> Tracking [label="Start", color=red];
+  Tracking -> Tracking [label="Reset", style=invis];
+  Tracking -> Idle [label="End", style=invis];
+  Idle [peripheries=2]
+}
+----
+
+[.notransition]
+== !
+
+Touch Tracking States 2
+
+[graphviz, touch-state-machine2, svg, width=600]
+----
+digraph g {
+  rankdir=LR;
+  Idle -> Tracking [label="Start"];
+  Tracking -> Tracking [label="Reset", color=red];
+  Tracking -> Idle [label="End", style=invis];
+  Idle [peripheries=2]
+}
+----
+
+[.notransition]
+== !
+
+Touch Tracking States 3
+
+[graphviz, touch-state-machine3, svg, width=600]
+----
+digraph g {
+  rankdir=LR;
+  Idle -> Tracking [label = "Start"];
+  Tracking -> Tracking [label = "Reset"];
+  Tracking -> Idle [label = "End", color=red];
+  Idle [peripheries=2]
+}
+----
+
+[.incremental]
+====
+Let's find the conditions *...*
+====
+
+[.source]
+== !
+
+[source.incremental,cpp]
+----
+  auto isStart = [=](auto args) {
+    return m_scaleActive == false && (args.count == 1 || args.diameter > 0);
+  };
+----
+
+[source.incremental,cpp]
+----
+  auto isEnd = [=](auto args) {
+    return isStart(args) || (m_scaleActive == true && args.count == 0);
+  };
+----
+
+[source.incremental,cpp]
+----
+  auto isReset = [=](auto args) {
+    return isEnd(args)
+        || args.event->touchPointStates().testFlag(Qt::TouchPointReleased)
+        || args.event->touchPointStates().testFlag(Qt::TouchPointPressed);
+  };
+----
+
+[source.incremental,cpp]
+.More Streams
+----
+  auto start = touchArgs.filter(isStart);
+  auto end = touchArgs.filter(isEnd);
+  auto reset = touchArgs.filter(isReset);
+----
+
+[.intro]
+== _How_ to connect it *?*
+
+[.image]
+== concat_map
+
+image::concatMap-1024x488.png[width=800]
+
+[.source]
+== !
+
+[source.incremental,cpp,subs=quotes]
+----
+  auto drag = start.**concat_map**([=](const PinchArgs& startArgs){
+----
+
+[source.incremental,cpp]
+----
+    startPinch();
+----
+
+[source.incremental,cpp]
+----
+    return touchArgs
+        .start_with(startArgs)
+----
+
+[source.incremental,cpp]
+----
+        .take_until(end)
+----
+
+[source.incremental,cpp]
+----
+        .finally([this](){ finishPinch(); });
+----
+
+[source.incremental,cpp]
+----
+  }, getSecondArg);
+----
+
+[source.incremental,cpp]
+.Use Events
+----
+  drag.subscribe([this](const PinchArgs& args){ updatePinch(args); });
+----
+
+[.intro]
+== Add reset
+
+[.incremental]
+* One more thing
+
+[.source]
+== !
+
+[source,cpp,subs=quotes]
+.Add Reset
+----
+  auto drag = start.concat_map([=](const PinchArgs& startArgs){
+    startPinch();
+    return *reset* // was touchArgs
+        .start_with(startArgs)
+----
+
+[source.incremental,cpp,subs=quotes]
+----
+        .concat_map([=](const PinchArgs& startArgs) {
+            resetPinch(startArgs);
+            return **touchArgs**.take_until(reset);
+        }, getSecondArg)
+----
+
+[source,cpp]
+----
+        .take_until(end)
+        .finally([this](){ finishPinch(); });
+  }, getSecondArg);
+
+  drag.subscribe([this](const PinchArgs& args){ updatePinch(args); });
+----
+
+[.intro]
+== Demo
+
+///////////
+
+== !
+
+// http://asciiflow.com/
+
+[graphviz, touch-state-machine, svg, width=600]
+----
+digraph g {
+  rankdir=LR;
+  {
+    node [shape=circle];
+    xs -> x1 -> x2 -> x3 -> xt -> xe;
+  }
+  subgraph cluster0 {
+    label="concat_map"; labelloc=c; labeljust=l;
+    color="black";
+    compound=true;
+    fi -> fo1 -> fo2 -> fot -> foe;
+  }
+  {
+    node [shape=diamond];
+    os -> ox1a -> ox1b -> ox2a -> ox2b -> ox3a -> ox3b -> ot -> oe;
+  }
+  { rank=same; xs; os; }
+  { rank=same; xt; ot; }
+  { rank=same; xe; oe; }
+  { rank=same; x1; ox1a; }
+  { rank=same; x2; ox2a; }
+  { rank=same; x3; ox3a; }
+  edge [style=dotted];
+  x1 -> cluster0 -> ox1a;
+  x2 -> ox2a;
+  x3 -> ox3a;
+  xt -> ot;
+}
+----
+
+== !
+
+[shaape, state-machine]
+---------------------------------------------------------------------
+        Start       Reset
+       +----+      +---+
+      /     v     /   /
+'(Idle)'  Tracking<-+
+      ^     /
+      +----+
+       End
+
+options:
+- ".*" : {fill : [no-shadow]}
+- "Start" : {fill : [green], text: [green]}
+- "End" : {fill : [red], text: [red]}
+- "Reset" : {fill : [blue], text: [blue]}
+---------------------------------------------------------------------
+
+[shaape.hidden, test]
+---------------------------------------------------------------------
+            '[changed]'
+            +----------> regenerate >----+
+           /                              \
+Event >-->                                 +---> result
+           \                              /
+            +---> use old image >--------+
+            '[unchanged]'
+
+xs = source
+ys = other
+zs = output
+f = selector
+
+xs --o----------------o-----------> t
+   x1|              x2|
+ys --(--o---o--o------(------o----> t
+     |  |y1 |y2       |
+     *->x   *-------->x
+        |'f(x1,y1)'   |'f(x2,y2)'
+zs -----o-------------o-----------> t
+
+options:
+- ".*" : {fill : [no-shadow]}
+- "Start" : {fill : [green], text: [green]}
+- "End" : {fill : [red], text: [red]}
+- "Reset" : {fill : [blue], text: [blue]}
+---------------------------------------------------------------------
+
+///////////
+
+[.intro]
+== Transducer Model
+
+*a*
+
+[.source]
+== !
+
+[source,cpp]
+----
+auto a_transducer(auto ...some_args) {
+----
+
+[source.incremental,cpp]
+----
+  return [some_args...](auto next) {
+----
+
+[source.incremental,cpp]
+----
+    return transducer_step(next, some_args...);
+  }
+----
+
+[source,cpp]
+----
+}
+----
+
+[source.incremental,cpp]
+.Example
+----
+auto e5 = enumerate(5); // call a transducer
+----
+
+[source.incremental,cpp]
+----
+auto s5to100 = e5(take_until(100)); // compose the result
+----
+
+[source.incremental,cpp]
+----
+auto stepper = s5to100(sum); // last step is the Reducer
+----
+
+== !
+
+[source,cpp]
+----
+template<typename step>
+struct transducer_step {
+  step next;
+
+  auto init(auto outer_state) {
+    auto next_state = next.init(outer_state);
+    auto wrapped_state = wrap(my_state, next_state);
+    return wrapped_state;
+  }
+  auto process(auto wrapped_state, auto... inputs) {
+    auto my_state, next_state = unwrap(wrapped_state);
+    // do stuff
+    return wrap(my_new_state, next_new_state);
+  }
+  auto complete(auto wrapped_state) {
+    auto my_state, next_state = unwrap(wrapped_state);
+    auto outer_state = next.complete(next_state);
+    return outer_state;
+  }
+}
+----
+
+[.intro]
+== RxCpp Model
+
+*the*
+
+== !
+
+[source,cpp]
+----
+rxcpp::subscriber<T> subscriber;
+subscriber.on_next(t); // process t
+subscriber.on_completed(); // finished regularly
+subscriber.on_error(exception); // got exception
+----
+
+[source.incremental,cpp]
+----
+rxcpp::observable<T> observable;
+auto subscription = observable.subscribe(subscriber); // connect subscriber
+----
+
+[source.incremental,cpp]
+----
+auto next_observable = observable.filter(pred);
+auto next_observable2 = observable.concat_map(pred1, pred2);
+----
+
+[source.incremental,cpp]
+----
+rxcpp::subjects::subject<T> subject;
+auto subscriber = subject.get_subscriber();
+auto observable = subject.get_observable();
+----
+
+[source.incremental,cpp]
+----
+rxcpp::coordinator // parallel processing
+rxcpp::sources:: // observables from various sources
+----
+
+[.intro]
+== Performance
+
+* some words to
+
+== !
+
+Zusammenfassung
+
+[.incremental]
+* Think Reactive
+* It's easier to read
+* More robust code
+
+[.ending]
+== !
+
+Fragen [.bigger]**?**
+
+[.footer]
+Andreas Reischuck
+@arBmind
+
+== !
+
+Image References
+
+[.small]
+* Rich Hickeys Twitter image https://twitter.com/richhickey
+* Rich Hickeys Transducer prestentation referenced on stackoverflow +
+  https://stackoverflow.com/questions/26485211/what-is-the-parallel-concept-in-rich-hickeys-transducers-strange-loop-talk
+* Pinch to zoom https://www.synergyse.com/blog/new-features-in-chrome-and-hangouts/
+* concat_map Fernando Cejas Blog http://fernandocejas.com/2015/01/11/rxjava-observable-tranformation-concatmap-vs-flatmap/
+
+== !
+
+Links
+
+[.bigger]
+* QML-Pinch: https://github.com/hicknhack-software/qml-pinch +
+  &nbsp;
+* RxCPP: https://github.com/Reactive-Extensions/RxCpp
+* Atria Transducers: https://github.com/Ableton/atria
+
+[.ending]
+== !
+
+Fragen [.bigger]**?**
+
+[.footer]
+Andreas Reischuck
+@arBmind
