@@ -15,3 +15,5 @@ Links zur Usergroup
 [Forum & Mailingliste](https://groups.google.com/forum/#!forum/cppdd)
 
 [Google+ Gruppe](https://plus.google.com/communities/106711291969607815526)
+
+[Facebook Gruppe](https://www.facebook.com/groups/536562106539702/)
