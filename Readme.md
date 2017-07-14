@@ -12,6 +12,8 @@ Links zur Usergroup
 
 [Youtube Kanal](https://www.youtube.com/channel/UCo2gC3EcC96Zz4sENWvR6qQ)
 
+[Meetup Gruppe](https://www.meetup.com/cpp-ug-dresden)
+
 [Forum & Mailingliste](https://groups.google.com/forum/#!forum/cppdd)
 
 [Google+ Gruppe](https://plus.google.com/communities/106711291969607815526)
