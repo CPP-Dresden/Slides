@@ -15,7 +15,7 @@ Leider hab ich das Beamer Bild nicht gecaptured, daher gibt es keine Video Aufze
 
 ## Online
 
-[Powerpoint Slides](https://cpp-dresden.github.io/Slides/2016-05-12 Andreas Reischuck My Modern C++ Journey/arBmind.pptx)
+[Powerpoint Slides](https://cpp-dresden.github.io/Slides/2016-05-12%20Andreas%20Reischuck%20My%20Modern%20C++%20Journey/arBmind.pptx)
 
 [My Coding Dojo Solution](https://github.com/CPP-Dresden/2016-03-Mount-Dojo/tree/arBmind)
 

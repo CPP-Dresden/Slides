@@ -15,7 +15,7 @@ Inhalt
 Online
 ------
 
-[View Slides](https://cpp-dresden.github.io/Slides/2016-01-14 Andreas Reischuck Transducer and Reactive Extensions/out)
+[View Slides](https://cpp-dresden.github.io/Slides/2016-01-14%20Andreas%20Reischuck%20Transducer%20and%20Reactive%20Extensions/out)
 
 [![Video Aufnahme](http://img.youtube.com/vi/RkxcZfC-BkU/0.jpg)](https://www.youtube.com/watch?v=RkxcZfC-BkU)
 

@@ -18,7 +18,7 @@ Inhalt
 Online
 ------
 
-[View Slides](https://cpp-dresden.github.io/Slides/2015-10-01 Markus Klemm Persistente Datenhaltung leicht gemacht/Persis_Datenhaltung_CPP_group.pdf)
+[View Slides](https://cpp-dresden.github.io/Slides/2015-10-01%20Markus%20Klemm%20Persistente%20Datenhaltung%20leicht%20gemacht/Persis_Datenhaltung_CPP_group.pdf)
 
 [![Video Aufnahme](http://img.youtube.com/vi/qylBkK1N_IQ/0.jpg)](https://youtu.be/qylBkK1N_IQ)
 
