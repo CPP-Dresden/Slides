@@ -10,7 +10,7 @@ You won't become a template wizard within this one hour, but you will have a bet
 
 ## Resources
 
-[PDF Slides](https://cpp-dresden.github.io/Slides/2017-08-10 Roland Bock Template Magic for Beginners/template_magic.pdf)
+[PDF Slides](https://cpp-dresden.github.io/Slides/2017-08-10%20Roland%20Bock%20Template%20Magic%20for%20Beginners/template_magic.pdf)
 
 [Sqlpp11 Library @Github](https://github.com/rbock/sqlpp11)
 
