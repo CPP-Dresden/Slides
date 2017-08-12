@@ -1,0 +1,598 @@
+\documentclass[aspectratio=169,xcolor=dvipsnames]{beamer}
+%\usepackage{beamerthemeBerkeley}
+% Use either the one above or the one below
+%\usetheme{bars}
+%\usetheme[height=7mm]{Rochester}
+%\usetheme{PaloAlto}
+\usetheme{Warsaw}
+\usenavigationsymbolstemplate{} % no navigation bar
+\usecolortheme[RGB={75,182,56}]{structure}
+
+\setbeamersize{text margin left=0.5cm}
+\setbeamersize{text margin right=0.5cm}
+%\setbeamertemplate{blocks}[rounded]% [shadow=false]
+
+%\usepackage{fancyvrb}
+\usepackage{listings}
+
+\definecolor{bg}{rgb}{0.95,0.95,0.95}
+\definecolor{keywordcolor}{rgb}{0.31,0.53,0.23}
+\definecolor{stringcolor}{RGB}{90,28,37}
+\definecolor{commentcolor}{RGB}{122,73,80}
+
+\lstset{% general command to set parameter(s)
+  %language=C++,
+  basicstyle=\scriptsize\ttfamily, % print whole listing small
+  columns=fixed,
+  basewidth=0.5em,
+  tabsize=2,
+  keywordstyle=\color{keywordcolor}, %\bfseries\underbar,
+  identifierstyle=\color{black}, % nothing happens
+  commentstyle=\color{commentcolor}, % white comments
+  stringstyle=\color{stringcolor},
+  showstringspaces=false,
+  backgroundcolor=\color{bg},
+  morecomment=[l]{//},
+  moredelim=[il][\color{red}]{==|},
+  moredelim=[is][\color{red}]{==>}{<==},
+  moredelim=[il][\color{RoyalBlue}]{--|},
+  moredelim=[is][\color{RoyalBlue}]{-->}{<--}
+} % no special string spaces
+
+
+\expandafter\def\expandafter\insertshorttitle\expandafter{%
+  \insertshorttitle\hfill%
+  \insertframenumber}
+
+\newcommand{\comment}[1]{}
+
+\comment{
+\lstset{literate=%
+   *{0}{{{\color{red!20!violet}0}}}1
+    {1}{{{\color{red!20!violet}1}}}1
+    {2}{{{\color{red!20!violet}2}}}1
+    {3}{{{\color{red!20!violet}3}}}1
+    {4}{{{\color{red!20!violet}4}}}1
+    {5}{{{\color{red!20!violet}5}}}1
+    {6}{{{\color{red!20!violet}6}}}1
+    {7}{{{\color{red!20!violet}7}}}1
+    {8}{{{\color{red!20!violet}8}}}1
+    {9}{{{\color{red!20!violet}9}}}1
+}
+}
+\lstset{literate={`}{{$^{\backprime}$}}1}
+
+\newcommand{\navigationframe}[1]{
+\begin{frame}{#1}
+\tableofcontents[currentsection]
+\end{frame}
+}
+
+\title{Template Magic For Beginners}
+\author{Dr.\ Roland Bock}
+\institute{http://ppro.com\\rbock at eudoxos dot de\\~\\https://github.com/rbock/sqlpp11}
+\date{Dresden, 2017-08-10}
+
+\begin{document}
+
+\frame{\titlepage}
+
+\begin{frame}[fragile]{Template Magic}
+    \begin{block}{What is it?}
+        \pause
+        It is not magic.
+    \end{block}
+\end{frame}
+
+\begin{frame}[fragile]{Template Meta Programming}
+\large What is it?
+\pause
+Wikipedia:\\
+{\sl Template metaprogramming (TMP) is a metaprogramming technique in which
+  templates are used by a compiler to generate temporary source code, which
+  is merged by the compiler with the rest of the source code and then compiled.\\
+  \pause The output of these templates include compile-time constants, data
+    structures, and complete functions.}\\
+    ~\\
+    \pause
+    Let's take a look.
+\end{frame}
+
+\begin{frame}[fragile]{std::vector::reserve}
+    \begin{block}{}
+        \begin{lstlisting}
+auto v = std::vector<T>{};
+...
+-->v.reserve(n)<--; // What's happening here?
+        \end{lstlisting}
+    \end{block}
+\end{frame}
+
+\begin{frame}[fragile]{std::vector::reserve}
+    \begin{block}{}
+        \begin{lstlisting}
+auto reserve(size_type n) -> void
+{
+    if (capacity < n)
+    {
+        if (-->T is bool<--)
+            do something
+        \end{lstlisting}
+\pause
+        \begin{lstlisting}
+        else if (-->T is trivially copyable<--)
+            do something else
+        \end{lstlisting}
+\pause
+        \begin{lstlisting}
+        else if (-->T is noexcept movable<--)
+            do yet another thing
+        \end{lstlisting}
+\pause
+        \begin{lstlisting}
+        else
+            oh, come on!
+    }
+}
+        \end{lstlisting}
+        \pause
+        Can't do all of this at runtime.
+    \end{block}
+\end{frame}
+
+\begin{frame}[fragile]{std::vector::reserve}
+    \begin{block}{We'll try to solve this with TMP}
+        \begin{lstlisting}
+auto reserve(size_type n) -> void
+{
+    if (capacity < n)
+    {
+        if (-->T is bool<--)
+            do something
+
+        else if (-->T is trivially copyable<--)
+            do something else
+
+        else if (-->T is noexcept movable<--)
+            do yet another thing
+
+        else
+            oh, come on!
+    }
+}
+        \end{lstlisting}
+    \end{block}
+    \pause First, we will reduce the problem.
+\end{frame}
+
+\begin{frame}[fragile]{Template Meta Programming}
+    \begin{block}{Reduced problem}
+        \begin{lstlisting}
+auto reserve(size_type n) -> void
+{
+    if (capacity < n)
+    {
+        if (-->T is bool<--)
+            do something
+        else
+            do something else
+    }
+}
+        \end{lstlisting}
+    \end{block}
+\end{frame}
+
+\begin{frame}[fragile]{Partial Specialization}
+    \begin{block}{Let's do something about bool}
+        \begin{lstlisting}
+template<class T, class Allocator = std::allocator<T>>
+class vector;
+        \end{lstlisting}
+\pause
+        \begin{lstlisting}
+template<class Allocator>
+class vector<-->bool<--, Allocator>
+{...};
+        \end{lstlisting}
+    \end{block}
+\end{frame}
+
+\begin{frame}[fragile]{Template Meta programming}
+    \begin{block}{Bool is out of the way now}
+        \begin{lstlisting}
+auto reserve(size_type n) -> void
+{
+    if (capacity < n)
+    {
+        if (-->T is trivially copyable<--)
+            do something
+
+        else if (-->T is noexcept movable<--)
+            do another thing
+
+        else
+            oh, come on!
+    }
+}
+        \end{lstlisting}
+    \end{block}
+\end{frame}
+
+\begin{frame}[fragile]{Template Meta Programming}
+    \begin{block}{Factor out common stuff}
+        \begin{lstlisting}
+auto reserve(size_type n) -> void
+{
+    if (capacity < n)
+    {
+        auto new_memory = allocate_new_memory(n);
+
+        if (-->T is trivially copyable<--)
+            do_memcpy(new_memory);
+
+        else if (-->T is noexcept movable<--)
+            move_every_item(new_memory);
+
+        else
+            copy_every_item(new_memory);
+    }
+}
+        \end{lstlisting}
+    \end{block}
+\end{frame}
+
+\begin{frame}[fragile]{Template Meta Programming}
+    \begin{block}{Make it a binary problem again}
+        \begin{lstlisting}
+auto reserve(size_type n) -> void
+{
+    if (capacity < n)
+    {
+        auto new_memory = allocate_new_memory(n);
+
+        if (==>T is trivially copyable<==)
+            do_memmove(new_memory);
+
+        else
+            copy_or_move_every_item(new_memory);
+    }
+}
+        \end{lstlisting}
+    \end{block}
+    How can we evaluate the condition?
+\end{frame}
+
+\begin{frame}[fragile]{Type Traits}
+    \begin{block}{From header $<$type\_traits$>$}
+        \begin{lstlisting}
+template< class T, T v >
+struct integral_constant
+{
+    static constexpr T value = v;
+};
+        \end{lstlisting}
+\pause
+        \begin{lstlisting}
+using true_type = std::integral_constant<bool, true>;
+using false_type = std::integral_constant<bool, false>;
+        \end{lstlisting}
+    \end{block}
+\end{frame}
+
+\begin{frame}[fragile]{Type Traits}
+    \begin{block}{From header $<$type\_traits$>$}
+        \begin{lstlisting}
+template <class T>
+struct is_trivially_copyable
+{
+    using type = ...; // Either true_type or false_type
+}
+        \end{lstlisting}
+\pause
+        \begin{lstlisting}
+template <class T>
+using is_trivially_copyable_t = typename is_trivially_copyable<T>::type;
+        \end{lstlisting}
+    \end{block}
+\end{frame}
+
+\begin{frame}[fragile]{Tag Dispatch}
+    \begin{block}{Using type traits as function call arguments}
+        \begin{lstlisting}
+auto reserve(size_type n) -> void
+{
+    if (capacity < n)
+    {
+        auto new_memory = allocate_new_memory(n);
+
+        move_mem_or_elements(==>is_trivially_copyable_t<T>{}<==, begin(), end(), new_memory);
+    }
+}
+        \end{lstlisting}
+    \end{block}
+\end{frame}
+
+\begin{frame}[fragile]{Tag Dispatch}
+    \begin{block}{Function overloads on tag types}
+        \begin{lstlisting}
+template<typename It, typename Data>
+auto move_mem_or_elements(==>true_type<==, It begin, It, end, Data& new_memory) -> void
+{
+    // Do memmove
+}
+        \end{lstlisting}
+\pause
+        \begin{lstlisting}
+template<typename It, typename Data>
+auto move_mem_or_elements(==>false_type<==, It begin, It, end, Data& new_memory) -> void
+{
+    copy_or_move(begin, end, new_memory);
+}
+        \end{lstlisting}
+    \end{block}
+\end{frame}
+
+\begin{frame}[fragile]{SFINAE}
+    \pause
+    \begin{block}{From header $<$type\_traits$>$}
+        \begin{lstlisting}
+template <bool B, class T = void>
+struct enable_if
+{
+};
+        \end{lstlisting}
+\pause
+        \begin{lstlisting}
+template <class T>
+struct enable_if<true, T>
+{
+    using type = T;
+};
+        \end{lstlisting}
+\pause
+        \begin{lstlisting}
+template <bool B, class T = void>
+using enable_if_t = typename enable_if<B, T>::type;
+        \end{lstlisting}
+    \end{block}
+\end{frame}
+
+\begin{frame}[fragile]{SFINAE}
+    \begin{block}{Turning overloads on/off with enable\_if}
+        \pause
+        \begin{lstlisting}
+template <typename Iterator, typename Data>
+auto -->copy_or_move<--(Iterator begin, Iterator, end, Data& new_memory) -> void;
+        \end{lstlisting}
+\pause
+        \begin{lstlisting}
+template <typename T, typename Data,
+          ==>typename = enable_if_t<==<-->is_nothrow_move_constructible<T>::value<-->
+         >
+auto -->copy_or_move<--(wrap_iter<T*> begin, wrap_iter<T*>, end, Data& new_memory) -> void;
+        \end{lstlisting}
+    \end{block}
+\end{frame}
+
+\begin{frame}[fragile]{Tag Dispatch and SFINAE}
+    \begin{block}{That's tough.}
+    \pause
+    However\dots
+    \end{block}
+\end{frame}
+
+\begin{frame}[fragile]{C++17}
+    \begin{block}{We started with this pseudo code}
+        \begin{lstlisting}
+auto reserve(size_type n) -> void
+{
+    if (capacity < n)
+    {
+        auto new_memory = allocate_new_memory(n);
+
+        if (-->T is trivially copyable<--)
+            do_memcpy(new_memory);
+
+        else if (-->T is noexcept movable<--)
+            move_every_item(new_memory);
+
+        else
+            copy_every_item(new_memory);
+    }
+}
+        \end{lstlisting}
+    \end{block}
+\end{frame}
+
+\begin{frame}[fragile]{C++17}
+    \begin{block}{if constexpr makes the pseudo code become reality}
+        \begin{lstlisting}
+auto reserve(size_type n) -> void
+{
+    if (capacity < n)
+    {
+        auto new_memory = allocate_new_memory(n);
+
+        ==>if constexpr<== (-->is_trivially_copyable_v<T><--)
+            do_memcpy(new_memory);
+
+        else ==>if constexpr<== (-->is_nothrow_move_constructible_v<T><--)
+            move_every_item(new_memory);
+
+        else
+            copy_every_item(new_memory);
+    }
+}
+        \end{lstlisting}
+    \end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]{C++17}
+    \begin{block}{C++17 rocks!}
+        Also look at {\tt void\_t}.
+   \end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]{CRTP}
+        \pause
+    \begin{block}{How do you make this work?}
+        \begin{lstlisting}
+#include <memory>
+
+struct Foo;
+
+void do_something(==>std::shared_ptr<Foo><== f);
+
+struct Foo
+{
+    auto do_it()
+    {
+        do_something(==>???<==);
+    }
+};
+
+int main() {
+    auto foo = std::make_shared<Foo>();
+    foo->do_it();
+}
+        \end{lstlisting}
+    \end{block}
+\end{frame}
+
+\begin{frame}[fragile]{CRTP}
+    \begin{block}{std::enable\_shared\_from\_this}
+        \begin{lstlisting}
+#include <memory>
+
+struct Foo;
+
+void do_something(std::shared_ptr<Foo> f);
+
+struct Foo==| : public std::enable_shared_from_this<Foo>
+{
+    auto do_it()
+    {
+        do_something(-->shared_from_this()<--);
+    }
+};
+
+int main() {
+    auto foo = std::make_shared<Foo>();
+    foo->do_it();
+}
+        \end{lstlisting}
+    \end{block}
+\end{frame}
+
+\begin{frame}[fragile]{CRTP}
+    \begin{block}{std::enable\_shared\_from\_this}
+        \begin{lstlisting}
+template<class _Tp>
+class enable_shared_from_this
+{
+    --|mutable weak_ptr<_Tp> __weak_this_;
+        \end{lstlisting}
+\pause
+        \begin{lstlisting}
+protected:
+    constexpr enable_shared_from_this() noexcept {}
+    enable_shared_from_this(enable_shared_from_this const&) noexcept {}
+    enable_shared_from_this& operator=(enable_shared_from_this const&) noexcept{ return *this; };
+        \end{lstlisting}
+\pause
+        \begin{lstlisting}
+public:
+    shared_ptr<_Tp> shared_from_this()
+        {return shared_ptr<_Tp>(__weak_this_);}
+
+    shared_ptr<_Tp const> shared_from_this() const
+        {return shared_ptr<const _Tp>(__weak_this_);}
+        \end{lstlisting}
+\pause
+        \begin{lstlisting}
+    --|template <class _Up> friend class shared_ptr;
+};
+        \end{lstlisting}
+    \end{block}
+\end{frame}
+
+\begin{frame}[fragile]{sqlpp::statement\_t}
+    \huge Let mix in variadics\dots
+\end{frame}
+
+\begin{frame}[fragile]{CRTP + Variadic Templates}
+    \begin{block}{sqlpp11: SQL expressions in C++}
+        \begin{lstlisting}
+for (const auto& row : db.run(
+                        select(foo.name, foo.hasFun)
+                        .from(foo)
+                        .where(foo.id > 17 and foo.name.like("%bar%"))))
+{
+  if (row.name.is_null())
+    std::cerr << "name will convert to empty string" << std::endl;
+  std::string name = row.name;
+
+  bool hasFun = row.hasFun;
+
+}
+        \end{lstlisting}
+    \end{block}
+\end{frame}
+
+\begin{frame}[fragile]{CRTP + Variadic Templates}
+    \begin{block}{The statement}
+        \begin{lstlisting}
+template <typename... Clauses>
+struct statement_t : public Clauses::template _base_t<detail::statement_t<Clauses...>>...,
+                     //...
+{
+    //...
+};
+
+        \end{lstlisting}
+    \end{block}
+\end{frame}
+
+\begin{frame}[fragile]{CRTP + Variadic Templates}
+    \begin{block}{The statement}
+        \begin{lstlisting}
+struct no_from_t
+{
+  template <typename Statement>
+  struct _base_t
+  {
+    template <typename Table>
+    auto from(Table table) const -> _new_statement_t<check_from_t<Table>, from_t<from_table_t<Table>>>
+    {
+      return _from_impl(check_from_t<Table>{}, table);
+    }
+        \end{lstlisting}
+\pause
+        \begin{lstlisting}
+  private:
+    template <typename Check, typename Table>
+    auto _from_impl(Check, Table table) const -> inconsistent<Check>;
+
+    template <typename Table>
+    auto _from_impl(consistent_t, Table table) const
+        -> _new_statement_t<consistent_t, from_t<Database, from_table_t<Table>>>;
+  };
+};
+        \end{lstlisting}
+    \end{block}
+\end{frame}
+
+\begin{frame}[fragile]{Template Magic?}
+    \begin{block}{No}
+        \pause
+        Template Perseverance
+    \end{block}
+\end{frame}
+
+\begin{frame}[fragile]{}
+        \huge Thank you!\\
+\end{frame}
+
+\end{document}
