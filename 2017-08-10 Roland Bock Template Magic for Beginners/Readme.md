@@ -12,9 +12,9 @@ You won't become a template wizard within this one hour, but you will have a bet
 
 [PDF Slides](https://cpp-dresden.github.io/Slides/2017-08-10%20Roland%20Bock%20Template%20Magic%20for%20Beginners/template_magic.pdf)
 
-[Sqlpp11 Library @Github](https://github.com/rbock/sqlpp11)
+[Sqlpp11 Library :octocat:](https://github.com/rbock/sqlpp11)
 
-[Sqlpp17 Rewrite @Github](https://github.com/rbock/sqlpp17)
+[Sqlpp17 Rewrite :octocat:](https://github.com/rbock/sqlpp17)
 
 [Meetup.com Event](https://www.meetup.com/de-DE/cpp-ug-dresden/events/240237987/)
 
