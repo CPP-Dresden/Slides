@@ -12,7 +12,7 @@ Handling von Binären Protokollen so einfach machen wie Text.
 * Wo stehen wir?
 * Unsere Idee "Protocol Generator"
 
-Live Coding von Sebatian
+Live Coding von Sebastian
 
 Diskussion über Chancen & Ziele
 
