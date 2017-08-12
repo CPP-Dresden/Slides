@@ -1,15 +1,15 @@
 # My modern C++ journey (part 1)
 
-## Ankündigung
+## AnkÃ¼ndigung
 
-Ich präsentiere euch diesen Monat die Auflösung des letzten Coding Dojos.
+Ich prÃ¤sentiere euch diesen Monat die AuflÃ¶sung des letzten Coding Dojos.
 Wie man gemountete Pfade indiziert und relativ komfortabel nutzen kann.
 
-Anschließend werde ich euch ein paar Experimente und Ideen mit modernen C++ vorstellen.
-Ich hoffe ihr könnt daraus etwas lernen und wir bekommen eine interessante Diskussion.
-Vielleicht kann ich euch sogar für ein paar Vortragsthemen inspirieren.
+AnschlieÃŸend werde ich euch ein paar Experimente und Ideen mit modernen C++ vorstellen.
+Ich hoffe ihr kÃ¶nnt daraus etwas lernen und wir bekommen eine interessante Diskussion.
+Vielleicht kann ich euch sogar fÃ¼r ein paar Vortragsthemen inspirieren.
 
-## Resumé
+## ResumÃ©
 
 Leider hab ich das Beamer Bild nicht gecaptured, daher gibt es keine Video Aufzeichnung.
 

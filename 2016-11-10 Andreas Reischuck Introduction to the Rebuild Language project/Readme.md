@@ -4,7 +4,7 @@ von Andreas Reischuck
 
 ## Abstrack
 
-Wer C++ beherrscht hat ein sehr m‰chtiges Werkzeug. Es gibt trotz allem Limits und Einschr‰nkungen. Auf der anderen Seite konnte sich die letzten 30 Jahre keine echte Alternative durchsetzen. Mit dem Rebuild Language Projekt versuchen wir zu ergr¸nden, was schief l‰uft in C++ und den Alternativen. Zudem sollen neue, noch unerprobte Ideen auf ihre Tauglichkeit analysiert werden. Das Projekt l‰uft jetzt seit etwa 8 Monaten. Ich werde den aktuellen Stand der Erkenntnisse und unsere Ideen f¸r eine neue Welt an Programmiersprachen vorstellen. Der Vortrag sollte auch zum Mitmachen anregen. Es ist zwar schwer eine Programmiersprache als globalen Standard durchzusetzen oder eine solche zu erweitern. Neue Sprach Ideen auf den gr¸nen Wiese auszuprobieren ist dagegen sehr einfach und gibt einem ganz neue Zauberkr‰fte.
+Wer C++ beherrscht hat ein sehr m√§chtiges Werkzeug. Es gibt trotz allem Limits und Einschr√§nkungen. Auf der anderen Seite konnte sich die letzten 30 Jahre keine echte Alternative durchsetzen. Mit dem Rebuild Language Projekt versuchen wir zu ergr√ºnden, was schief l√§uft in C++ und den Alternativen. Zudem sollen neue, noch unerprobte Ideen auf ihre Tauglichkeit analysiert werden. Das Projekt l√§uft jetzt seit etwa 8 Monaten. Ich werde den aktuellen Stand der Erkenntnisse und unsere Ideen f√ºr eine neue Welt an Programmiersprachen vorstellen. Der Vortrag sollte auch zum Mitmachen anregen. Es ist zwar schwer eine Programmiersprache als globalen Standard durchzusetzen oder eine solche zu erweitern. Neue Sprach Ideen auf den gr√ºnen Wiese auszuprobieren ist dagegen sehr einfach und gibt einem ganz neue Zauberkr√§fte.
 
 ## Online
 
