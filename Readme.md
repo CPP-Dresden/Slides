@@ -1,9 +1,11 @@
-Slide Archiv
-============
+Slides Archive
+==============
 
-Sammlung aller veröffentlichten Präsentationsunterlagen der C++ Usergroup Dresden.
+This is the collection of all publicly available resources for the sessions held at C++ Usergroup Dresden.
 
-Jedes Verzeichnis hat eine Readme mit Hinweisen und Links zum Vortrag.
+Each folder contains a readme with hints and link for the respective session.
+(Some are in German language, if the session was held in German)
+
 
 Links zur Usergroup
 -------------------
