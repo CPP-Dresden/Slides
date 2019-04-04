@@ -1,6 +1,12 @@
 # A view of infinite `<ranges>` in C++20's kitchen
+René Richter
 
-Talk at C++ User Group Dresden, 2019-03-14 (Pi Day!)
+## Abstract
 
+The Ranges TS is adopted to the upcoming C++20 standard draft. The <ranges> library will offer another way for data manipulation. Describe complex algorithms by combining small readable blocks, correct by design, and as efficient as handwritten loops. Get familiar with it's basic ideas, background and implementations. Live examples will show what is possible right now.
+  
+## Resources
+
+* 2019-03-14 is Pi Day!
 * Slides (PDF)
-* see also https://bitbucket.org/dozric/cpp_ranges_talk/src/default/
+* Sources: https://bitbucket.org/dozric/cpp_ranges_talk/src/default/
